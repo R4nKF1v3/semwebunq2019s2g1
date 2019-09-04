@@ -5,13 +5,18 @@ import fs = require('fs'); // para cargar/guarfar unqfy
 
 class UNQfy {
 
-private listeners = [];
+  //TODO: Cambiar a Array<T>
+  private listeners = [];
+
+  constructor(){
+    this.listeners = [];
+  }
 
   // artistData: objeto JS con los datos necesarios para crear un artista
   //   artistData.name (string)
   //   artistData.country (string)
   // retorna: el nuevo artista creado
-  addArtist(artistData) {
+  addArtist(artistData : object) {
   /* Crea un artista y lo agrega a unqfy.
   El objeto artista creado debe soportar (al menos):
     - una propiedad name (string)
@@ -24,7 +29,7 @@ private listeners = [];
   //   albumData.name (string)
   //   albumData.year (number)
   // retorna: el nuevo album creado
-  addAlbum(artistId, albumData) {
+  addAlbum(artistId : number, albumData : object) {
   /* Crea un album y lo agrega al artista con id artistId.
     El objeto album creado debe tener (al menos):
      - una propiedad name (string)
@@ -38,7 +43,7 @@ private listeners = [];
   //   trackData.duration (number)
   //   trackData.genres (lista de strings)
   // retorna: el nuevo track creado
-  addTrack(albumId, trackData) {
+  addTrack(albumId : number, trackData : object) {
   /* Crea un track y lo agrega al album con id albumId.
   El objeto track creado debe tener (al menos):
       - una propiedad name (string),
@@ -47,31 +52,31 @@ private listeners = [];
   */
   }
 
-  getArtistById(id) {
+  getArtistById(id : number) {
 
   }
 
-  getAlbumById(id) {
+  getAlbumById(id : number) {
 
   }
 
-  getTrackById(id) {
+  getTrackById(id : number) {
 
   }
 
-  getPlaylistById(id) {
+  getPlaylistById(id : number) {
 
   }
 
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
-  getTracksMatchingGenres(genres) {
+  getTracksMatchingGenres(genres : Array<string>) {
 
   }
 
   // artistName: nombre de artista(string)
   // retorna: los tracks interpredatos por el artista con nombre artistName
-  getTracksMatchingArtist(artistName) {
+  getTracksMatchingArtist(artistName : string) {
 
   }
 
@@ -80,7 +85,7 @@ private listeners = [];
   // genresToInclude: array de generos
   // maxDuration: duración en segundos
   // retorna: la nueva playlist creada
-  createPlaylist(name, genresToInclude, maxDuration) {
+  createPlaylist(name : string, genresToInclude : Array<string>, maxDuration : number) {
   /*** Crea una playlist y la agrega a unqfy. ***
     El objeto playlist creado debe soportar (al menos):
       * una propiedad name (string)
@@ -90,7 +95,7 @@ private listeners = [];
 
   }
 
-  save(filename) {
+  save(filename : string) {
     const listenersBkp = this.listeners;
     this.listeners = [];
 
@@ -100,7 +105,7 @@ private listeners = [];
     fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));
   }
 
-  static load(filename) {
+  static load(filename : string) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
     const classes = [UNQfy];
