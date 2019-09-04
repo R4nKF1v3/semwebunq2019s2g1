@@ -9,6 +9,7 @@
     "typescript": "^3.6.2"
   },
   "devDependencies": {
+    "@types/node": "^12.7.4",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.10.0",
