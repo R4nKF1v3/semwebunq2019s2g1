@@ -1,19 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs"); // necesitado para guardar/cargar unqfy
-const unqfy_1 = require("./unqfy"); // importamos el modulo unqfy
-const process = require("process");
+import fs = require('fs'); // necesitado para guardar/cargar unqfy
+import {UNQfy} from './unqfy'; // importamos el modulo unqfy
+import process = require('process');
+
 // Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.
 function getUNQfy(filename = 'data.json') {
-    let unqfy = new unqfy_1.UNQfy();
-    if (fs.existsSync(filename)) {
-        unqfy = unqfy_1.UNQfy.load(filename);
-    }
-    return unqfy;
+  let unqfy = new UNQfy();
+  if (fs.existsSync(filename)) {
+    unqfy = UNQfy.load(filename);
+  }
+  return unqfy;
 }
+
 function saveUNQfy(unqfy, filename = 'data.json') {
-    unqfy.save(filename);
+  unqfy.save(filename);
 }
+
 /*
  En esta funcion deberán interpretar los argumentos pasado por linea de comandos
  e implementar los diferentes comandos.
@@ -43,12 +44,14 @@ function saveUNQfy(unqfy, filename = 'data.json') {
    4. Guardar el estado de UNQfy (saveUNQfy)
 
 */
+
 function main() {
-    console.log('arguments: ');
-    const args = process.argv;
-    args.forEach((argument, index) => console.log(index + ':' + argument));
-    const unqfy = getUNQfy();
-    unqfy.executeWith(args[2], args.slice(3, args.length - 1));
-    saveUNQfy(unqfy);
+  console.log('arguments: ');
+  const args = process.argv;
+  args.forEach((argument, index) => console.log(index + ':' + argument));
+  const unqfy: UNQfy = getUNQfy();
+  unqfy.executeWith(args[2], args.slice(3, args.length-1));
+  saveUNQfy(unqfy);
 }
+
 main();

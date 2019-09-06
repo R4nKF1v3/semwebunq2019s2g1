@@ -4,6 +4,10 @@
         "module": "commonjs",
         "types": [
             "node"
-        ]
-    }
+        ],
+        "rootDir": "./ts",
+        "outDir": "./"
+    },
+    "include": ["./ts"],
+    "exclude": ["./node_modules"]
 }

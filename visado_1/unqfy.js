@@ -4,7 +4,24 @@ const picklify = require("picklify"); // para cargar/guarfar unqfy
 const fs = require("fs"); // para cargar/guarfar unqfy
 class UNQfy {
     constructor() {
+        //TODO: Preguntar kiesesto
         this.listeners = [];
+        this.listeners = [];
+        this.artists = [];
+    }
+    //Switch que ejecuta los comandos dependiendo del término
+    executeWith(command, args) {
+        switch (command) {
+            case "addArtist":
+                this.addArtist({ name: args[0], country: args[1] });
+            case "getArtist":
+                this.getArtistById(parseInt(args[0]));
+        }
+    }
+    getNewId() {
+        const ret = this.idCounter;
+        this.idCounter++;
+        return ret;
     }
     // artistData: objeto JS con los datos necesarios para crear un artista
     //   artistData.name (string)
@@ -16,6 +33,7 @@ class UNQfy {
           - una propiedad name (string)
           - una propiedad country (string)
         */
+        this.artists.push(new Artist(this.getNewId(), artistData.name, artistData.country));
     }
     // albumData: objeto JS con los datos necesarios para crear un album
     //   albumData.name (string)
@@ -42,6 +60,7 @@ class UNQfy {
         */
     }
     getArtistById(id) {
+        return this.artists.find((artist, index) => artist.id === id);
     }
     getAlbumById(id) {
     }
@@ -79,11 +98,23 @@ class UNQfy {
     static load(filename) {
         const serializedData = fs.readFileSync(filename, { encoding: 'utf-8' });
         //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-        const classes = [UNQfy];
+        const classes = [UNQfy, Artist, Album, Track, Playlist, User];
         return picklify.unpicklify(JSON.parse(serializedData), classes);
     }
 }
-// COMPLETAR POR EL ALUMNO: exportar todas las clases que necesiten ser utilizadas desde un modulo cliente
-module.exports = {
-    UNQfy,
-};
+exports.UNQfy = UNQfy;
+class Artist {
+    constructor(id, name, country) {
+        this.id = id;
+        this.name = name;
+        this.country = country;
+    }
+}
+class Album {
+}
+class Track {
+}
+class Playlist {
+}
+class User {
+}
