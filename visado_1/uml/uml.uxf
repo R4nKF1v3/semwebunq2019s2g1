@@ -1,16 +1,252 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.3.0">
   <help_text/>
-  <zoom_level>10</zoom_level>
+  <zoom_level>6</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>450</x>
-      <y>170</y>
-      <w>100</w>
+      <x>480</x>
+      <y>378</y>
+      <w>126</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>Track
+--
+-id: Number
+-name: String
+-duration: Number
+-genres: Array&lt;String&gt;
+--
+bg=#FFE57C</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>300</x>
+      <y>540</y>
+      <w>126</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>Album
+--
+-id: Number
+-name: String
+-year: Number
+--
+bg=#FFE57C</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>672</x>
+      <y>540</y>
+      <w>126</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>Artist
+--
+-id: Number
+-name: String
+-country: String
+--
+bg=#FFE57C</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>126</x>
+      <y>120</y>
+      <w>126</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>Playlist
+--
+-id: Number
+-genres: Array&lt;String&gt;
+--
++duration(): Number
++hasTrack(aTrack: Track): Boolean
+bg=#FFE57C</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>852</x>
+      <y>120</y>
+      <w>126</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>User
+--
+-id: Number
+-name: String
+--
++listenTo(aTrack: Track)
+bg=#7CFF9B</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>540</x>
+      <y>300</y>
+      <w>42</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+m1=1
+m2=0..*
+tracks</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>396</x>
+      <y>300</y>
+      <w>42</w>
+      <h>252</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+m1=1
+m2=0..*
+albums</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;400.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>696</x>
+      <y>300</y>
+      <w>42</w>
+      <h>252</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+m1=1
+m2=0..*
+artists</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;400.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>732</x>
+      <y>126</y>
+      <w>132</w>
       <h>30</h>
     </coordinates>
-    <panel_attributes>UNQify</panel_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+m1=1
+m2=0..*
+users</panel_attributes>
+    <additional_attributes>10.0;20.0;200.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>246</x>
+      <y>126</y>
+      <w>144</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-&gt;
+m1=1
+m2=0..*
+playlists</panel_attributes>
+    <additional_attributes>220.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>486</y>
+      <w>144</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=0..*
+tracks</panel_attributes>
+    <additional_attributes>10.0;100.0;200.0;100.0;200.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>564</y>
+      <w>264</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=0..*
+albums</panel_attributes>
+    <additional_attributes>420.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>600</x>
+      <y>228</y>
+      <w>300</w>
+      <h>198</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..*
+m2=0..*
+tracksListened</panel_attributes>
+    <additional_attributes>10.0;300.0;460.0;300.0;460.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>222</x>
+      <y>228</y>
+      <w>270</w>
+      <h>204</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=1..*
+m2=0..*
+tracks</panel_attributes>
+    <additional_attributes>430.0;310.0;10.0;310.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>378</x>
+      <y>102</y>
+      <w>360</w>
+      <h>204</h>
+    </coordinates>
+    <panel_attributes>UNQfy
+--
++addArtist(artistData: Object): Artist
++addAlbum(artistId: Number, albumData: Object): Album
++addTrack(albumId: Number, trackData: Object): Track
++createPlaylist(name: String, genresToInclude: Array&lt;String&gt;, maxDuration: Number): Playlist
++deleteArtist(artistId: Number)
++deleteAlbum(albumId: Number)
++deleteTrack(trackId: Number)
++deletePlaylist(playlistId: Number)
++getArtistById(id: Number): Artist
++getAlbumById(id: Number): Album
++getTrackById(id: Number): Track
++getPlaylistById(id: Number): Playlist
++getTracksMatchingGenres(genres: Array&lt;String&gt;): Array&lt;Track&gt;
++getTracksMatchingArtist(artistName: String): Array&lt;Track&gt;
++getByName(keyword: String): Object
+//Object.tracks Object.albums Object.artists
++userListenTo(userId: Number, trackId: Number)
++mostListenedTo(artistId: Number): Array&lt;Track&gt;
++save(filename: String)
+_+load(filename: String): UNQfy_
+
+bg=#7CA8FF</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>
