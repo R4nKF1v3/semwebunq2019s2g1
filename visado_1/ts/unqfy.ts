@@ -27,7 +27,7 @@ class UNQfy {
       case "addArtist":
         this.addArtist({name: args[0], country: args[1]})
       case "getArtist":
-        this.getArtistById(parseInt(args[0]))
+        return this.getArtistById(parseInt(args[0]))
     }
   }
 
@@ -78,20 +78,24 @@ class UNQfy {
   */
   }
 
-  getArtistById(id : number) {
-    return this.artists.find((artist, index) => artist.id === id)
+  getArtistById(id : number): Artist {
+    const ret: Artist = this.artists.find((artist, index) => artist.id === id)
+    if (ret != null){
+      console.log("id: " + ret.id + " name: " + ret.name + " country: " +ret.country)
+    };
+    return ret;
   }
 
-  getAlbumById(id : number) {
-
+  getAlbumById(id : number): Album {
+    return null;
   }
 
-  getTrackById(id : number) {
-
+  getTrackById(id : number): Track{
+    return null;
   }
 
-  getPlaylistById(id : number) {
-
+  getPlaylistById(id : number): Playlist {
+    return null;
   }
 
   // genres: array de generos(strings)
