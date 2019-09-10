@@ -48,7 +48,7 @@ function main() {
     const args = process.argv;
     args.forEach((argument, index) => console.log(index + ':' + argument));
     const unqfy = getUNQfy();
-    const returnStatement = unqfy.executeWith(args[2], args.slice(3, args.length - 1));
+    const returnStatement = unqfy.executeWith(args[2], args.slice(3, args.length));
     saveUNQfy(unqfy);
     return returnStatement;
 }

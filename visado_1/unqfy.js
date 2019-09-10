@@ -38,6 +38,7 @@ class UNQfy {
     }
     //Switch que ejecuta los comandos dependiendo del término
     executeWith(command, args) {
+        console.log("Comando " + command + " con argumentos: " + args);
         switch (command) {
             case "addArtist":
                 return this.addArtist({ name: args[0], country: args[1] });
@@ -68,7 +69,9 @@ class UNQfy {
           - una propiedad name (string)
           - una propiedad country (string)
         */
-        this.artists.push(new Artist(this.getNewArtistId(), artistData.name, artistData.country));
+        const artist = new Artist(this.getNewArtistId(), artistData.name, artistData.country);
+        this.artists.push(artist);
+        console.log("Added new artist to the list: " + artist.name + " from: " + artist.country + " with ID: " + artist.id);
     }
     deleteArtist(artistId) {
         this.artists = this.artists.filter(artist => artist.id !== artistId);
@@ -116,13 +119,19 @@ class UNQfy {
         this.allAlbums().forEach(album => album.tracks = album.tracks.filter(track => track.id !== trackId));
     }
     genericSearch(elementId, elementsArray) {
-        const foundedElement = elementsArray.find(element => element.id === elementId);
-        if (foundedElement != null)
-            console.log(JSON.stringify(foundedElement));
-        return foundedElement;
+        const foundElement = elementsArray.find(element => element.id === elementId);
+        if (foundElement != null) {
+            console.log(JSON.stringify(foundElement));
+            return foundElement;
+        }
+        else {
+            throw new Error('Element not found');
+        }
     }
     getArtistById(id) {
-        return this.genericSearch(id, this.artists);
+        const res = this.genericSearch(id, this.artists);
+        console.log("Nombre del artista: " + res.name + " Nacionalidad: " + res.country + " Albums: " + res.albums);
+        return res;
     }
     getAlbumById(id) {
         return this.genericSearch(id, this.allAlbums());
