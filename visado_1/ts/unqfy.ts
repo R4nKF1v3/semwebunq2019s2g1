@@ -1,12 +1,8 @@
-
-import picklify = require('picklify'); // para cargar/guarfar unqfy
-import fs = require('fs'); // para cargar/guarfar unqfy
+import picklify = require('picklify');
+import fs = require('fs');
 
 
 class UNQfy {
-
-  //TODO: Preguntar kiesesto
-  private listeners = [];
 
   private idCounter: any = {
     artistId: 0,
@@ -14,20 +10,15 @@ class UNQfy {
     trackId: 0,
   };
 
-  // AE: lo comente porque según el diagrama UML los tracks están dentro de los albums y los albums están dentro de los artistas
-  //     los voy a reemplazar por metodos.
-  //private tracks: Array<Track>;
-  //private albums: Array<Album>;
-
   private allTracks(): Array<Track> {
     return this.allAlbums().reduce( (acum, album) => 
-        acum.concat(album.tracks), []
+        acum.concat(album.getTracks()), []
     );
   }
 
   private allAlbums(): Array<Album> {
     return this.artists.reduce( (acum, artist) => 
-        acum.concat(artist.albums), []
+        acum.concat(artist.getAlbums()), []
     );
   }
 
@@ -36,7 +27,6 @@ class UNQfy {
   private users: Array<User>;
 
   constructor(){
-    this.listeners = [];
     this.artists = [];
   }
 
@@ -121,7 +111,7 @@ class UNQfy {
 
   deleteAlbum(albumId: number) {
     this.artists.forEach( artist => 
-      artist.albums = artist.albums.filter( album => album.id !== albumId )
+      artist.deleteAlbum(albumId)
     )
   }
 
@@ -149,7 +139,7 @@ class UNQfy {
 
   deleteTrack(trackId: number) {
     this.allAlbums().forEach( album =>
-      album.tracks = album.tracks.filter( track => track.id !== trackId )
+      album.deleteTrack(trackId)
     );
   }
 
@@ -165,7 +155,7 @@ class UNQfy {
 
   getArtistById(id : number): Artist {
     const res: Artist = this.genericSearch(id, this.artists);
-    console.log("Nombre del artista: " + res.name + " Nacionalidad: " + res.country + " Albums: " + res.albums)
+    console.log("Nombre del artista: " + res.name + " Nacionalidad: " + res.country + " Albums: " + res.getAlbums())
     return res;
   }
 
@@ -209,12 +199,7 @@ class UNQfy {
   }
 
   save(filename : string) {
-    const listenersBkp = this.listeners;
-    this.listeners = [];
-
     const serializedData = picklify.picklify(this);
-
-    this.listeners = listenersBkp;
     fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));
   }
 
@@ -226,69 +211,6 @@ class UNQfy {
   }
 }
 
-class Artist{
-  readonly id: number;
-  readonly name : string;
-  readonly country : string;
-  albums: Array<Album>;
-  
-  constructor(id: number, name: string, country: string){
-    this.id = id;
-    this.name = name;
-    this.country = country;
-    this.albums = [];
-  }
-
-  addAlbum(album: Album) {
-    this.albums.push(album);
-  }
-
-}
-
-class Album{
-  readonly id: number;
-  readonly name: string;
-  readonly year: number;
-  tracks: Array<Track>;
-  
-  constructor(id: number, name: string, year: number) {
-    this.id = id;
-    this.name = name;
-    this.year = year;
-    this.tracks = [];
-  }
-
-  addTrack(track: Track) {
-    this.tracks.push(track);
-  }
-
-}
-
-class Track{
-  readonly id: number;
-  readonly name: string;
-  readonly duration: number;
-  readonly genres: Array<string>;
-
-  constructor(id: number, name: string, duration: number, genres: Array<string>) {
-    this.id = id;
-    this.name = name;
-    this.duration = duration;
-    this.genres = genres;
-  }
-
-}
-
-class Playlist{
-
-}
-
-class User{
-
-}
-
 // COMPLETAR POR EL ALUMNO: exportar todas las clases que necesiten ser utilizadas desde un modulo cliente
-export {
-  UNQfy,
-};
+export { UNQfy }
 
