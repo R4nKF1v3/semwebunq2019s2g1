@@ -1,4 +1,4 @@
-class User{
+export default class User{
   readonly id: number;
   readonly name: string;
   readonly history: Array<HistoryEvent>;

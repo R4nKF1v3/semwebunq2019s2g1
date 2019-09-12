@@ -1,4 +1,6 @@
-class Artist {
+import Album from "./Album";
+
+export default class Artist {
   readonly id: number;
   readonly name : string;
   readonly country : string;

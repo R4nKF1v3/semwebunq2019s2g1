@@ -1,4 +1,6 @@
-class Album{
+import Track from "./Track";
+
+export default class Album{
   readonly id: number;
   readonly name: string;
   readonly year: number;

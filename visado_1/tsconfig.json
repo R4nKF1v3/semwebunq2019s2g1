@@ -5,9 +5,9 @@
         "types": [
             "node"
         ],
-        "rootDir": "./ts",
+        "rootDir": "src/ts",
         "outDir": "./"
     },
-    "include": ["./ts"],
+    "include": ["src/ts"],
     "exclude": ["./node_modules"]
 }

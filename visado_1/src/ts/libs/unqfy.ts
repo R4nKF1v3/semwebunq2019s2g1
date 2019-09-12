@@ -1,8 +1,12 @@
 import picklify = require('picklify');
 import fs = require('fs');
+import Artist from "./Artist";
+import Album from "./Album";
+import Track from "./Track";
+import Playlist from "./Playlist";
+import User from "./User";
 
-
-class UNQfy {
+export default class UNQfy {
 
   private idCounter: any = {
     artistId: 0,
@@ -210,7 +214,4 @@ class UNQfy {
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 }
-
-// COMPLETAR POR EL ALUMNO: exportar todas las clases que necesiten ser utilizadas desde un modulo cliente
-export { UNQfy }
 

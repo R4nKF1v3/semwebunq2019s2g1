@@ -1,4 +1,7 @@
-class Playlist{
+import UNQfy from "./unqfy";
+import Track from "./Track";
+
+export default class Playlist{
   readonly tracks: Array<Track> = [];
   readonly genres: Array<string>;
   readonly id: number;

@@ -1,5 +1,5 @@
 import fs = require('fs'); // necesitado para guardar/cargar unqfy
-import {UNQfy} from './unqfy'; // importamos el modulo unqfy
+import UNQfy from './libs/unqfy'; // importamos el modulo unqfy
 import process = require('process');
 
 // Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.

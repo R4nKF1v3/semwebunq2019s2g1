@@ -1,4 +1,4 @@
-class Track{
+export default class Track{
   readonly id: number;
   readonly name: string;
   readonly duration: number;
