@@ -1,4 +1,5 @@
 import Track from "./Track";
+import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 
 export default class Album{
   readonly id: number;
@@ -19,7 +20,7 @@ export default class Album{
       this.tracks.push(newTrack);
       return newTrack;
     } else {
-      throw new Error(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration} already exists!`)
+      throw new ElementAlreadyExistsError(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration}`)
     }
     
   }

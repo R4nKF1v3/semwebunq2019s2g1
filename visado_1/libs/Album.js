@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Track_1 = require("./Track");
+const ElementAlreadyExistsError_1 = require("./exceptions/ElementAlreadyExistsError");
 class Album {
     constructor(id, name, year) {
         this.id = id;
@@ -15,7 +16,7 @@ class Album {
             return newTrack;
         }
         else {
-            throw new Error(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration} already exists!`);
+            throw new ElementAlreadyExistsError_1.default(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration}`);
         }
     }
     trackDoesNotExist(trackData) {

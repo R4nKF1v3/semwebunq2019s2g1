@@ -7,6 +7,10 @@ const Album_1 = require("./Album");
 const Track_1 = require("./Track");
 const Playlist_1 = require("./Playlist");
 const User_1 = require("./User");
+const InvalidCommandError_1 = require("./exceptions/InvalidCommandError");
+const InsufficientParametersError_1 = require("./exceptions/InsufficientParametersError");
+const ElementAlreadyExistsError_1 = require("./exceptions/ElementAlreadyExistsError");
+const ElementNotFoundError_1 = require("./exceptions/ElementNotFoundError");
 class UNQfy {
     constructor() {
         this.idCounter = {
@@ -80,12 +84,12 @@ class UNQfy {
                 this.checkParametersLength(args, 1, "searchByName");
                 return this.searchByName(args[0]);
             default:
-                throw new Error(`El comando '${command}' no es un comando válido`);
+                throw new InvalidCommandError_1.default(command);
         }
     }
     checkParametersLength(parameters, length, caseType) {
         if (parameters.length < length) {
-            throw new Error("Insufficient parameters for command " + caseType);
+            throw new InsufficientParametersError_1.default(caseType);
         }
     }
     // artistData: objeto JS con los datos necesarios para crear un artista
@@ -99,7 +103,7 @@ class UNQfy {
             return artist;
         }
         else {
-            throw new Error(`Artist ${artistData.name} from ${artistData.country} already exists!`);
+            throw new ElementAlreadyExistsError_1.default(`Artist ${artistData.name} from ${artistData.country}`);
         }
     }
     artistDoesNotExist(artistData) {
@@ -111,8 +115,6 @@ class UNQfy {
     // retorna: el nuevo album creado
     addAlbum(artistId, albumData) {
         let artist = this.getArtistById(artistId);
-        if (artist == null)
-            throw new Error(`Artist with id ${artistId} doesn't exist`);
         return artist.addAlbum(albumData, this);
     }
     // trackData: objeto JS con los datos necesarios para crear un track
@@ -122,8 +124,6 @@ class UNQfy {
     // retorna: el nuevo track creado
     addTrack(albumId, trackData) {
         let album = this.getAlbumById(albumId);
-        if (album == null)
-            throw new Error(`Album with id ${albumId} doesn't exist`);
         return album.addTrack(trackData, this);
     }
     getArtist(arg) {
@@ -131,7 +131,12 @@ class UNQfy {
             return this.getArtistById(parseInt(arg));
         }
         catch (e) {
-            return this.getArtistByName(arg);
+            if (e.typeof(ElementNotFoundError_1.default)) {
+                return this.getArtistByName(arg);
+            }
+            else {
+                throw e;
+            }
         }
     }
     genericSearch(elementId, elementsArray) {
@@ -140,7 +145,7 @@ class UNQfy {
             return foundElement;
         }
         else {
-            throw new Error('Element not found');
+            throw new ElementNotFoundError_1.default();
         }
     }
     getArtistById(id) {
@@ -153,10 +158,10 @@ class UNQfy {
             return foundElement[0];
         }
         else if (foundElement.length === 0) {
-            throw new Error('Artist not found');
+            throw new ElementNotFoundError_1.default('Artist not found');
         }
         else {
-            throw new Error('More than one match for the Artist');
+            throw new ElementNotFoundError_1.default('More than one match for the Artist');
         }
     }
     getAlbumById(id) {

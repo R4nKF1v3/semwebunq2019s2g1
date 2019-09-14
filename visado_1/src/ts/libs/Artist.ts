@@ -1,5 +1,6 @@
 import Album from "./Album";
 import Track from "./Track";
+import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 
 export default class Artist {
   readonly id: number;
@@ -20,7 +21,7 @@ export default class Artist {
       this.albums.push(newAlbum);
       return newAlbum;
     } else {
-      throw new Error(`Album ${albumData.name} of ${this.name} in ${albumData.year} already exists!`);
+      throw new ElementAlreadyExistsError(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);
     }
   }
 

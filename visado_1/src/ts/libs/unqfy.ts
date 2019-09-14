@@ -5,6 +5,10 @@ import Album from "./Album";
 import Track from "./Track";
 import Playlist from "./Playlist";
 import User from "./User";
+import InvalidCommandError from "./exceptions/InvalidCommandError";
+import InsufficientParametersError from "./exceptions/InsufficientParametersError";
+import ElementAreadyExistsError from "./exceptions/ElementAlreadyExistsError";
+import ElementNotFoundError from './exceptions/ElementNotFoundError';
 
 class UNQfy {
 
@@ -95,13 +99,13 @@ class UNQfy {
         this.checkParametersLength(args, 1, "searchByName");
         return this.searchByName(args[0]);
       default:
-        throw new Error(`El comando '${command}' no es un comando válido`);
+        throw new InvalidCommandError(command);
     }
   }
 
   private checkParametersLength(parameters: Array<string>, length: number, caseType: string){
     if (parameters.length < length){
-      throw new Error("Insufficient parameters for command " + caseType);
+      throw new InsufficientParametersError(caseType);
     }
   }
 
@@ -115,7 +119,7 @@ class UNQfy {
       this.artists.push(artist);
       return artist;
     } else {
-      throw new Error(`Artist ${artistData.name} from ${artistData.country} already exists!`)
+      throw new ElementAreadyExistsError(`Artist ${artistData.name} from ${artistData.country}`)
     }
   }
 
@@ -129,10 +133,6 @@ class UNQfy {
   // retorna: el nuevo album creado
   addAlbum(artistId : number, albumData: any): Album {
     let artist = this.getArtistById(artistId);
-
-    if (artist == null)
-      throw new Error(`Artist with id ${artistId} doesn't exist`);
-
     return artist.addAlbum(albumData, this);
   }
 
@@ -143,10 +143,6 @@ class UNQfy {
   // retorna: el nuevo track creado
   addTrack(albumId : number, trackData : any): Track {
     let album = this.getAlbumById(albumId);
-
-    if (album == null)
-      throw new Error(`Album with id ${albumId} doesn't exist`);
-
     return album.addTrack(trackData, this)
   }
 
@@ -154,7 +150,11 @@ class UNQfy {
     try {
       return this.getArtistById(parseInt(arg));
     } catch(e){
-      return this.getArtistByName(arg);
+      if (e.typeof(ElementNotFoundError)){
+        return this.getArtistByName(arg);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -163,7 +163,7 @@ class UNQfy {
     if (foundElement != null){
       return foundElement;
     }else {
-      throw new Error('Element not found')
+      throw new ElementNotFoundError()
     }
   }
 
@@ -177,9 +177,9 @@ class UNQfy {
       console.log(JSON.stringify(foundElement));
       return foundElement[0];
     }else if (foundElement.length === 0) {
-      throw new Error('Artist not found')
+      throw new ElementNotFoundError('Artist not found');
     } else {
-      throw new Error('More than one match for the Artist')
+      throw new ElementNotFoundError('More than one match for the Artist');
     }
   }
 
