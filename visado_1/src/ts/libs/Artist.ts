@@ -1,4 +1,5 @@
 import Album from "./Album";
+import UNQfy from "./unqfy";
 
 export default class Artist {
   readonly id: number;
@@ -13,8 +14,18 @@ export default class Artist {
     this.albums = [];
   }
 
-  addAlbum(album: Album) {
-    this.albums.push(album);
+  addAlbum(albumData: any, unqfy: UNQfy) {
+    if (this.albumDoesNotExist(albumData)){
+      const newAlbum = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year);
+      this.albums.push(newAlbum);
+      return newAlbum;
+    } else {
+      throw new Error(`Album ${albumData.name} of ${this.name} in ${albumData.year} already exists!`)
+    }
+  }
+
+  private albumDoesNotExist(albumData: any): boolean{
+    return this.albums.find(album => album.name === albumData.name && album.year === albumData.year) == null
   }
 
   getAlbums() {

@@ -15,6 +15,8 @@ class UNQfy {
             trackId: 0,
         };
         this.artists = [];
+        this.playlists = [];
+        this.users = [];
     }
     allTracks() {
         return this.allAlbums().reduce((acum, album) => acum.concat(album.getTracks()), []);
@@ -39,22 +41,40 @@ class UNQfy {
         console.log("Comando " + command + " con argumentos: " + args);
         switch (command) {
             case "addArtist":
+                this.checkParametersLength(args, 2, "addArtist");
                 return this.addArtist({ name: args[0], country: args[1] });
             case "getArtist":
-                return this.getArtistById(parseInt(args[0]));
+                this.checkParametersLength(args, 1, "getArtist");
+                return this.getArtist(args[0]);
             case "addAlbum":
+                this.checkParametersLength(args, 3, "addAlbum");
                 return this.addAlbum(parseInt(args[0]), { name: args[1], year: args[2] });
+            case "getAlbum":
+                this.checkParametersLength(args, 1, "getAlbum");
+                return this.getAlbumById(parseInt(args[0]));
             case "addTrack":
+                this.checkParametersLength(args, 4, "addTrack");
                 const GENRES_ARRAY = JSON.parse(args[3]);
                 return this.addTrack(parseInt(args[0]), { name: args[1], duration: args[2], genres: GENRES_ARRAY });
+            case "getTrack":
+                this.checkParametersLength(args, 1, "getTrack");
+                return this.getTrackById(parseInt(args[0]));
             case "deleteArtist":
+                this.checkParametersLength(args, 1, "deleteArtist");
                 return this.deleteArtist(parseInt(args[0]));
             case "deleteAlbum":
+                this.checkParametersLength(args, 1, "deleteAlbum");
                 return this.deleteAlbum(parseInt(args[0]));
             case "deleteTrack":
+                this.checkParametersLength(args, 1, "deleteTrack");
                 return this.deleteTrack(parseInt(args[0]));
             default:
                 throw new Error(`El comando '${command}' no es un comando válido`);
+        }
+    }
+    checkParametersLength(parameters, length, caseType) {
+        if (parameters.length != length) {
+            throw new Error("Insufficient parameters for command " + caseType);
         }
     }
     // artistData: objeto JS con los datos necesarios para crear un artista
@@ -62,14 +82,17 @@ class UNQfy {
     //   artistData.country (string)
     // retorna: el nuevo artista creado
     addArtist(artistData) {
-        /* Crea un artista y lo agrega a unqfy.
-        El objeto artista creado debe soportar (al menos):
-          - una propiedad name (string)
-          - una propiedad country (string)
-        */
-        const artist = new Artist_1.default(this.getNewArtistId(), artistData.name, artistData.country);
-        this.artists.push(artist);
-        console.log("Added new artist to the list: " + artist.name + " from: " + artist.country + " with ID: " + artist.id);
+        if (this.artistDoesNotExist(artistData)) {
+            const artist = new Artist_1.default(this.getNewArtistId(), artistData.name, artistData.country);
+            this.artists.push(artist);
+            console.log("Added new artist to the list: " + artist.name + " from: " + artist.country + " with ID: " + artist.id);
+        }
+        else {
+            throw new Error(`Artist ${artistData.name} from ${artistData.country} already exists!`);
+        }
+    }
+    artistDoesNotExist(artistData) {
+        return this.artists.find(artist => artist.name === artistData.name && artist.country === artistData.country) == null;
     }
     deleteArtist(artistId) {
         this.artists = this.artists.filter(artist => artist.id !== artistId);
@@ -79,17 +102,10 @@ class UNQfy {
     //   albumData.year (number)
     // retorna: el nuevo album creado
     addAlbum(artistId, albumData) {
-        /* Crea un album y lo agrega al artista con id artistId.
-          El objeto album creado debe tener (al menos):
-           - una propiedad name (string)
-           - una propiedad year (number)
-        */
         let artist = this.getArtistById(artistId);
         if (artist == null)
             throw new Error(`No se pudo encontrar el artista con id ${artistId}`);
-        const newAlbum = new Album_1.default(this.getNewAlbumId(), albumData.name, albumData.year);
-        artist.addAlbum(newAlbum);
-        return newAlbum;
+        artist.addAlbum(albumData, this);
     }
     deleteAlbum(albumId) {
         this.artists.forEach(artist => artist.deleteAlbum(albumId));
@@ -100,21 +116,21 @@ class UNQfy {
     //   trackData.genres (lista de strings)
     // retorna: el nuevo track creado
     addTrack(albumId, trackData) {
-        /* Crea un track y lo agrega al album con id albumId.
-        El objeto track creado debe tener (al menos):
-            - una propiedad name (string),
-            - una propiedad duration (number),
-            - una propiedad genres (lista de strings)
-        */
         let album = this.getAlbumById(albumId);
         if (album == null)
             throw new Error(`No se pudo encontrar el album con id ${albumId}`);
-        const newTrack = new Track_1.default(this.getNewTrackId(), trackData.name, trackData.duration, trackData.genres);
-        album.addTrack(newTrack);
-        return newTrack;
+        album.addTrack(trackData, this);
     }
     deleteTrack(trackId) {
         this.allAlbums().forEach(album => album.deleteTrack(trackId));
+    }
+    getArtist(arg) {
+        try {
+            return this.getArtistById(parseInt(arg));
+        }
+        catch (e) {
+            return this.getArtistByName(arg);
+        }
     }
     genericSearch(elementId, elementsArray) {
         const foundElement = elementsArray.find(element => element.id === elementId);
@@ -127,9 +143,20 @@ class UNQfy {
         }
     }
     getArtistById(id) {
-        const res = this.genericSearch(id, this.artists);
-        console.log("Nombre del artista: " + res.name + " Nacionalidad: " + res.country + " Albums: " + res.getAlbums());
-        return res;
+        return this.genericSearch(id, this.artists);
+    }
+    getArtistByName(name) {
+        const foundElement = this.artists.filter(element => element.name === name);
+        if (foundElement.length === 1) {
+            console.log(JSON.stringify(foundElement));
+            return foundElement[0];
+        }
+        else if (foundElement.length === 0) {
+            throw new Error('Artist not found');
+        }
+        else {
+            throw new Error('More than one match for the Artist');
+        }
     }
     getAlbumById(id) {
         return this.genericSearch(id, this.allAlbums());
