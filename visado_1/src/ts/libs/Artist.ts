@@ -1,5 +1,6 @@
 import Album from "./Album";
 import UNQfy from "./unqfy";
+import Track from "./Track";
 
 export default class Artist {
   readonly id: number;
@@ -20,7 +21,7 @@ export default class Artist {
       this.albums.push(newAlbum);
       return newAlbum;
     } else {
-      throw new Error(`Album ${albumData.name} of ${this.name} in ${albumData.year} already exists!`)
+      throw new Error(`Album ${albumData.name} of ${this.name} in ${albumData.year} already exists!`);
     }
   }
 
@@ -32,7 +33,16 @@ export default class Artist {
     return this.albums;
   }
 
-  deleteAlbum(albumId: number) {
+  deleteAlbum(albumId: number, unqfy: UNQfy) {
+    this.albums.find(album => album.id === albumId).getTracks().forEach(track =>
+      unqfy.deleteTrackFromPlaylists(track.id)
+    );
     this.albums = this.albums.filter( album => album.id !== albumId );
+  }
+
+  getAllTracks(): Array<Track>{
+    const allTracks: Array<Track> = [];
+    this.albums.forEach(album => allTracks.concat(album.getTracks()))
+    return allTracks;
   }
 }

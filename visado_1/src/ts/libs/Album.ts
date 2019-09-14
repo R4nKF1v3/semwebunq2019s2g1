@@ -33,7 +33,7 @@ export default class Album{
     this.tracks = this.tracks.filter( track => track.id !== trackId );
   }
 
-  getTracks() {
+  getTracks(): Array<Track> {
     return this.tracks;
   }
 

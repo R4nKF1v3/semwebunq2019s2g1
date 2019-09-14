@@ -94,9 +94,6 @@ class UNQfy {
     artistDoesNotExist(artistData) {
         return this.artists.find(artist => artist.name === artistData.name && artist.country === artistData.country) == null;
     }
-    deleteArtist(artistId) {
-        this.artists = this.artists.filter(artist => artist.id !== artistId);
-    }
     // albumData: objeto JS con los datos necesarios para crear un album
     //   albumData.name (string)
     //   albumData.year (number)
@@ -104,11 +101,8 @@ class UNQfy {
     addAlbum(artistId, albumData) {
         let artist = this.getArtistById(artistId);
         if (artist == null)
-            throw new Error(`No se pudo encontrar el artista con id ${artistId}`);
+            throw new Error(`Artist with id ${artistId} doesn't exist`);
         artist.addAlbum(albumData, this);
-    }
-    deleteAlbum(albumId) {
-        this.artists.forEach(artist => artist.deleteAlbum(albumId));
     }
     // trackData: objeto JS con los datos necesarios para crear un track
     //   trackData.name (string)
@@ -118,11 +112,8 @@ class UNQfy {
     addTrack(albumId, trackData) {
         let album = this.getAlbumById(albumId);
         if (album == null)
-            throw new Error(`No se pudo encontrar el album con id ${albumId}`);
+            throw new Error(`Album with id ${albumId} doesn't exist`);
         album.addTrack(trackData, this);
-    }
-    deleteTrack(trackId) {
-        this.allAlbums().forEach(album => album.deleteTrack(trackId));
     }
     getArtist(arg) {
         try {
@@ -165,7 +156,22 @@ class UNQfy {
         return this.genericSearch(id, this.allTracks());
     }
     getPlaylistById(id) {
-        throw new Error("Not yet implemented");
+        return this.genericSearch(id, this.playlists);
+    }
+    deleteArtist(artistId) {
+        const artistToDelete = this.artists.find(artist => artist.id !== artistId);
+        artistToDelete.getAlbums().forEach(album => artistToDelete.deleteAlbum(album.id, this));
+        this.artists = this.artists.filter(artist => artist.id !== artistId);
+    }
+    deleteAlbum(albumId) {
+        this.artists.forEach(artist => artist.deleteAlbum(albumId, this));
+    }
+    deleteTrack(trackId) {
+        this.allAlbums().forEach(album => album.deleteTrack(trackId));
+        this.deleteTrackFromPlaylists(trackId);
+    }
+    deleteTrackFromPlaylists(id) {
+        this.playlists.forEach(playlist => playlist.deleteTrack(id));
     }
     // genres: array de generos(strings)
     // retorna: los tracks que contenga alguno de los generos en el parametro genres
@@ -175,7 +181,7 @@ class UNQfy {
     // artistName: nombre de artista(string)
     // retorna: los tracks interpredatos por el artista con nombre artistName
     getTracksMatchingArtist(artistName) {
-        throw new Error("Not yet implemented");
+        return this.getArtist(artistName).getAllTracks();
     }
     // name: nombre de la playlist
     // genresToInclude: array de generos

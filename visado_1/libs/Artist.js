@@ -24,8 +24,14 @@ class Artist {
     getAlbums() {
         return this.albums;
     }
-    deleteAlbum(albumId) {
+    deleteAlbum(albumId, unqfy) {
+        this.albums.find(album => album.id === albumId).getTracks().forEach(track => unqfy.deleteTrackFromPlaylists(track.id));
         this.albums = this.albums.filter(album => album.id !== albumId);
+    }
+    getAllTracks() {
+        const allTracks = [];
+        this.albums.forEach(album => allTracks.concat(album.getTracks()));
+        return allTracks;
     }
 }
 exports.default = Artist;

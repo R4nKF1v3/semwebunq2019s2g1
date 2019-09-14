@@ -12,5 +12,8 @@ class Playlist {
         // unqfy.allTracks() filtrar por los generos de este playlist
         throw new Error("No implementado");
     }
+    deleteTrack(id) {
+        this.tracks = this.tracks.filter(track => track.id !== id);
+    }
 }
 exports.default = Playlist;
