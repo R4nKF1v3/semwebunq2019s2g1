@@ -17,7 +17,6 @@ export default class Album{
     if (this.trackDoesNotExist(trackData)){
       const newTrack = new Track(unqfy.getNewTrackId(), trackData.name, trackData.duration, trackData.genres);
       this.tracks.push(newTrack);
-      console.log(`Added new track to the list for album: ${this.name} with name: ${newTrack.name} with duration: ${newTrack.duration} with genres: ${newTrack.genres} with ID: ${newTrack.id}`)
       return newTrack;
     } else {
       throw new Error(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration} already exists!`)

@@ -12,7 +12,6 @@ class Album {
         if (this.trackDoesNotExist(trackData)) {
             const newTrack = new Track_1.default(unqfy.getNewTrackId(), trackData.name, trackData.duration, trackData.genres);
             this.tracks.push(newTrack);
-            console.log(`Added new track to the list for album: ${this.name} with name: ${newTrack.name} with duration: ${newTrack.duration} with genres: ${newTrack.genres} with ID: ${newTrack.id}`);
             return newTrack;
         }
         else {

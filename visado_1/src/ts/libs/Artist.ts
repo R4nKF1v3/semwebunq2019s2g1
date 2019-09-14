@@ -18,7 +18,6 @@ export default class Artist {
     if (this.albumDoesNotExist(albumData)){
       const newAlbum = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year);
       this.albums.push(newAlbum);
-      console.log(`Added new album to the list for artist: ${this.name} with name: ${newAlbum.name} in year: ${newAlbum.year} with ID: ${newAlbum.id}`)
       return newAlbum;
     } else {
       throw new Error(`Album ${albumData.name} of ${this.name} in ${albumData.year} already exists!`);
@@ -43,8 +42,6 @@ export default class Artist {
   getAllTracks(): Array<Track>{
     var allTracks: Array<Track> = [];
     this.albums.forEach(album => allTracks = allTracks.concat(album.getTracks()))
-    console.log("Todos los tracks de: " + this.name);
-    console.log(JSON.stringify(allTracks));
     return allTracks;
   }
 }

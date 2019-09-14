@@ -44,11 +44,10 @@ function saveUNQfy(unqfy, filename = 'data.json') {
 
 */
 function main() {
-    console.log('arguments: ');
     const args = process.argv;
-    args.forEach((argument, index) => console.log(index + ':' + argument));
     const unqfy = getUNQfy();
     const returnStatement = unqfy.executeWith(args[2], args.slice(3, args.length));
+    console.log(JSON.stringify(returnStatement));
     saveUNQfy(unqfy);
     return returnStatement;
 }

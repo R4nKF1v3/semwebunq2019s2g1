@@ -12,7 +12,6 @@ class Artist {
         if (this.albumDoesNotExist(albumData)) {
             const newAlbum = new Album_1.default(unqfy.getNewAlbumId(), albumData.name, albumData.year);
             this.albums.push(newAlbum);
-            console.log(`Added new album to the list for artist: ${this.name} with name: ${newAlbum.name} in year: ${newAlbum.year} with ID: ${newAlbum.id}`);
             return newAlbum;
         }
         else {
@@ -32,8 +31,6 @@ class Artist {
     getAllTracks() {
         var allTracks = [];
         this.albums.forEach(album => allTracks = allTracks.concat(album.getTracks()));
-        console.log("Todos los tracks de: " + this.name);
-        console.log(JSON.stringify(allTracks));
         return allTracks;
     }
 }

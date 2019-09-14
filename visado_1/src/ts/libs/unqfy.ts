@@ -72,6 +72,10 @@ class UNQfy {
       case "getTrack":
           this.checkParametersLength(args, 1, "getTrack");
           return this.getTrackById(parseInt(args[0]));
+      case "getPlaylist":
+          this.checkParametersLength(args, 1, "getPlaylist");
+          //TODO: Que busque por ID y por nombre
+          return this.getPlaylistById(parseInt(args[0]));
       case "deleteArtist":
         this.checkParametersLength(args, 1, "deleteArtist");
         return this.deleteArtist(parseInt(args[0]));
@@ -84,6 +88,12 @@ class UNQfy {
       case "getTracksFromArtist":
         this.checkParametersLength(args, 1, "getTracksFromArtist");
         return this.getTracksMatchingArtist(args[0]);
+      case "getTracksMatchingGenres":
+        this.checkParametersLength(args, 1, "getTracksMatchingGenres");
+        return this.getTracksMatchingGenres(args.slice(0, args.length));
+      case "searchByName":
+        this.checkParametersLength(args, 1, "searchByName");
+        return this.searchByName(args[0]);
       default:
         throw new Error(`El comando '${command}' no es un comando válido`);
     }
@@ -103,7 +113,6 @@ class UNQfy {
     if (this.artistDoesNotExist(artistData)){
       const artist = new Artist(this.getNewArtistId(), artistData.name, artistData.country);
       this.artists.push(artist);
-      console.log("Added new artist to the list: " + artist.name + " from: " + artist.country + " with ID: " + artist.id)
       return artist;
     } else {
       throw new Error(`Artist ${artistData.name} from ${artistData.country} already exists!`)
@@ -152,7 +161,6 @@ class UNQfy {
   private genericSearch(elementId: number, elementsArray: Array<any>) {
     const foundElement: any = elementsArray.find( element => element.id === elementId);
     if (foundElement != null){
-      console.log(JSON.stringify(foundElement));
       return foundElement;
     }else {
       throw new Error('Element not found')
@@ -232,15 +240,6 @@ class UNQfy {
     const albums = this.allAlbums().filter(album => album.name.toLowerCase().includes(keyw));
     const tracks = this.allTracks().filter(track => track.name.toLowerCase().includes(keyw));
     const playlists = this.playlists.filter(playlist => playlist.name.toLowerCase().includes(keyw));
-    console.log("Search results that match: " + keyword);
-    console.log("Artists:");
-    artists.forEach(artist => console.log(`Name: ${artist.name} Country: ${artist.country} Id: ${artist.id}`));
-    console.log("Albums:");
-    albums.forEach(album => console.log(`Name: ${album.name} Year: ${album.year} Id: ${album.id}`));
-    console.log("Tracks:");
-    tracks.forEach(track => console.log(`Name: ${track.name} Country: ${track.duration} Genres: ${track.genres} Id: ${track.id}`));
-    console.log("Playlists:");
-    playlists.forEach(playlist => console.log(`Name: ${playlist.name} Genres: ${playlist.genres} Id: ${playlist.id}`));    
     return {artists, albums, tracks, playlists};
   }
 
