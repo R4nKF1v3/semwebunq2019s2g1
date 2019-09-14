@@ -213,6 +213,8 @@ class UNQfy {
             * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
         */
     }
+    //TODO: Funciones de creación y manipulación de usuarios
+    //createUser(name: string)
     save(filename) {
         const serializedData = picklify.picklify(this);
         fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));

@@ -257,6 +257,9 @@ class UNQfy {
 
   }
 
+  //TODO: Funciones de creación y manipulación de usuarios
+  //createUser(name: string)
+
   save(filename : string) {
     const serializedData = picklify.picklify(this);
     fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));

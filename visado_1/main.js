@@ -46,11 +46,15 @@ function saveUNQfy(unqfy, filename = 'data.json') {
 function main() {
     const args = process.argv;
     const unqfy = getUNQfy();
-    const returnStatement = unqfy.executeWith(args[2], args.slice(3, args.length));
-    Object.entries(returnStatement).forEach(entry => {
-        console.log(entry[0] + ": " + JSON.stringify(entry[1]));
-    });
-    saveUNQfy(unqfy);
-    return returnStatement;
+    try {
+        const returnStatement = unqfy.executeWith(args[2], args.slice(3, args.length));
+        Object.entries(returnStatement).forEach(entry => {
+            console.log(entry[0] + ": " + JSON.stringify(entry[1]));
+        });
+        saveUNQfy(unqfy);
+    }
+    catch (e) {
+        console.log(e.message);
+    }
 }
 main();
