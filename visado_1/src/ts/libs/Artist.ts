@@ -1,5 +1,4 @@
 import Album from "./Album";
-import UNQfy from "./unqfy";
 import Track from "./Track";
 
 export default class Artist {
@@ -15,10 +14,11 @@ export default class Artist {
     this.albums = [];
   }
 
-  addAlbum(albumData: any, unqfy: UNQfy) {
+  addAlbum(albumData: any, unqfy): Album {
     if (this.albumDoesNotExist(albumData)){
       const newAlbum = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year);
       this.albums.push(newAlbum);
+      console.log(`Added new album to the list for artist: ${this.name} with name: ${newAlbum.name} in year: ${newAlbum.year} with ID: ${newAlbum.id}`)
       return newAlbum;
     } else {
       throw new Error(`Album ${albumData.name} of ${this.name} in ${albumData.year} already exists!`);
@@ -33,7 +33,7 @@ export default class Artist {
     return this.albums;
   }
 
-  deleteAlbum(albumId: number, unqfy: UNQfy) {
+  deleteAlbum(albumId: number, unqfy) {
     this.albums.find(album => album.id === albumId).getTracks().forEach(track =>
       unqfy.deleteTrackFromPlaylists(track.id)
     );
@@ -41,8 +41,10 @@ export default class Artist {
   }
 
   getAllTracks(): Array<Track>{
-    const allTracks: Array<Track> = [];
-    this.albums.forEach(album => allTracks.concat(album.getTracks()))
+    var allTracks: Array<Track> = [];
+    this.albums.forEach(album => allTracks = allTracks.concat(album.getTracks()))
+    console.log("Todos los tracks de: " + this.name);
+    console.log(JSON.stringify(allTracks));
     return allTracks;
   }
 }

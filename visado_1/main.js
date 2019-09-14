@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs"); // necesitado para guardar/cargar unqfy
-const unqfy_1 = require("./libs/unqfy"); // importamos el modulo unqfy
+const unqmod = require('./libs/unqfy'); // importamos el modulo unqfy
 const process = require("process");
 // Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.
 function getUNQfy(filename = 'data.json') {
-    let unqfy = new unqfy_1.default();
+    let unqfy = new unqmod.UNQfy();
     if (fs.existsSync(filename)) {
-        unqfy = unqfy_1.default.load(filename);
+        unqfy = unqmod.UNQfy.load(filename);
     }
     return unqfy;
 }

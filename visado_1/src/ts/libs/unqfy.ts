@@ -6,7 +6,7 @@ import Track from "./Track";
 import Playlist from "./Playlist";
 import User from "./User";
 
-export default class UNQfy {
+class UNQfy {
 
   private idCounter: any = {
     artistId: 0,
@@ -53,24 +53,22 @@ export default class UNQfy {
 
   //Switch que ejecuta los comandos dependiendo del término
   executeWith(command: string, args: Array<string>): any{
-    console.log("Comando " + command + " con argumentos: " + args)
     switch (command) {
       case "addArtist":
         this.checkParametersLength(args, 2, "addArtist");
         return this.addArtist({name: args[0], country: args[1]});
-      case "getArtist":
-        this.checkParametersLength(args, 1, "getArtist");
-        return this.getArtist(args[0]);
       case "addAlbum":
         this.checkParametersLength(args, 3, "addAlbum");
         return this.addAlbum(parseInt(args[0]), {name: args[1], year: args[2]});
+      case "addTrack":
+        this.checkParametersLength(args, 4, "addTrack");
+        return this.addTrack(parseInt(args[0]), {name: args[1], duration: args[2], genres: args.slice(3, args.length)});
+      case "getArtist":
+          this.checkParametersLength(args, 1, "getArtist");
+          return this.getArtist(args[0]);
       case "getAlbum":
           this.checkParametersLength(args, 1, "getAlbum");
           return this.getAlbumById(parseInt(args[0]));
-      case "addTrack":
-        this.checkParametersLength(args, 4, "addTrack");
-        const GENRES_ARRAY = JSON.parse(args[3]);
-        return this.addTrack(parseInt(args[0]), {name: args[1], duration: args[2], genres: GENRES_ARRAY});
       case "getTrack":
           this.checkParametersLength(args, 1, "getTrack");
           return this.getTrackById(parseInt(args[0]));
@@ -83,13 +81,16 @@ export default class UNQfy {
       case "deleteTrack":
         this.checkParametersLength(args, 1, "deleteTrack");
         return this.deleteTrack(parseInt(args[0]));
+      case "getTracksFromArtist":
+        this.checkParametersLength(args, 1, "getTracksFromArtist");
+        return this.getTracksMatchingArtist(args[0]);
       default:
         throw new Error(`El comando '${command}' no es un comando válido`);
     }
   }
 
   private checkParametersLength(parameters: Array<string>, length: number, caseType: string){
-    if (parameters.length != length){
+    if (parameters.length < length){
       throw new Error("Insufficient parameters for command " + caseType);
     }
   }
@@ -98,11 +99,12 @@ export default class UNQfy {
   //   artistData.name (string)
   //   artistData.country (string)
   // retorna: el nuevo artista creado
-  addArtist(artistData: any) {
+  addArtist(artistData: any): Artist {
     if (this.artistDoesNotExist(artistData)){
       const artist = new Artist(this.getNewArtistId(), artistData.name, artistData.country);
       this.artists.push(artist);
       console.log("Added new artist to the list: " + artist.name + " from: " + artist.country + " with ID: " + artist.id)
+      return artist;
     } else {
       throw new Error(`Artist ${artistData.name} from ${artistData.country} already exists!`)
     }
@@ -116,13 +118,13 @@ export default class UNQfy {
   //   albumData.name (string)
   //   albumData.year (number)
   // retorna: el nuevo album creado
-  addAlbum(artistId : number, albumData: any) {
+  addAlbum(artistId : number, albumData: any): Album {
     let artist = this.getArtistById(artistId);
 
     if (artist == null)
       throw new Error(`Artist with id ${artistId} doesn't exist`);
 
-    artist.addAlbum(albumData, this); 
+    return artist.addAlbum(albumData, this);
   }
 
   // trackData: objeto JS con los datos necesarios para crear un track
@@ -130,13 +132,13 @@ export default class UNQfy {
   //   trackData.duration (number)
   //   trackData.genres (lista de strings)
   // retorna: el nuevo track creado
-  addTrack(albumId : number, trackData : any) {
+  addTrack(albumId : number, trackData : any): Track {
     let album = this.getAlbumById(albumId);
 
     if (album == null)
       throw new Error(`Album with id ${albumId} doesn't exist`);
 
-    album.addTrack(trackData, this)
+    return album.addTrack(trackData, this)
   }
 
   private getArtist(arg: string): Artist{
@@ -215,7 +217,7 @@ export default class UNQfy {
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
   getTracksMatchingGenres(genres : Array<string>): Array<Track> {
-    return this.allTracks().filter(track => track.hasGenre(genres));
+    return this.allTracks().filter(track => track.containsGenre(genres));
   }
 
   // artistName: nombre de artista(string)
@@ -224,19 +226,22 @@ export default class UNQfy {
     return this.getArtist(artistName).getAllTracks();
   }
 
-  genericKeywordSearch(keyword: string){
+  searchByName(keyword: string){
     const keyw = keyword.toLowerCase();
     const artists = this.artists.filter(artist => artist.name.toLowerCase().includes(keyw));
     const albums = this.allAlbums().filter(album => album.name.toLowerCase().includes(keyw));
     const tracks = this.allTracks().filter(track => track.name.toLowerCase().includes(keyw));
+    const playlists = this.playlists.filter(playlist => playlist.name.toLowerCase().includes(keyw));
     console.log("Search results that match: " + keyword);
     console.log("Artists:");
     artists.forEach(artist => console.log(`Name: ${artist.name} Country: ${artist.country} Id: ${artist.id}`));
-    console.log("Albums:");;
+    console.log("Albums:");
     albums.forEach(album => console.log(`Name: ${album.name} Year: ${album.year} Id: ${album.id}`));
-    console.log("Tracks:");;
+    console.log("Tracks:");
     tracks.forEach(track => console.log(`Name: ${track.name} Country: ${track.duration} Genres: ${track.genres} Id: ${track.id}`));
-    return {artists, albums, tracks};
+    console.log("Playlists:");
+    playlists.forEach(playlist => console.log(`Name: ${playlist.name} Genres: ${playlist.genres} Id: ${playlist.id}`));    
+    return {artists, albums, tracks, playlists};
   }
 
   // name: nombre de la playlist
@@ -266,3 +271,6 @@ export default class UNQfy {
   }
 }
 
+module.exports = {
+  UNQfy,
+};

@@ -1,5 +1,4 @@
 import Track from "./Track";
-import UNQfy from "./unqfy";
 
 export default class Album{
   readonly id: number;
@@ -14,10 +13,11 @@ export default class Album{
     this.tracks = [];
   }
 
-  addTrack(trackData: any, unqfy: UNQfy) {
+  addTrack(trackData: any, unqfy): Track {
     if (this.trackDoesNotExist(trackData)){
       const newTrack = new Track(unqfy.getNewTrackId(), trackData.name, trackData.duration, trackData.genres);
       this.tracks.push(newTrack);
+      console.log(`Added new track to the list for album: ${this.name} with name: ${newTrack.name} with duration: ${newTrack.duration} with genres: ${newTrack.genres} with ID: ${newTrack.id}`)
       return newTrack;
     } else {
       throw new Error(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration} already exists!`)
@@ -26,7 +26,7 @@ export default class Album{
   }
 
   private trackDoesNotExist(trackData: any): boolean{
-    return this.tracks.find(track => track.name === trackData.name && track.duration === trackData.duration && track.genres == trackData.genres) == null    
+    return this.tracks.find(track => track.name === trackData.name && track.duration === trackData.duration && track.hasSameGenres(trackData.genres)) == null    
   }
 
   deleteTrack(trackId: number) {

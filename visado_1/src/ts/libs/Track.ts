@@ -11,7 +11,12 @@ export default class Track{
     this.genres = genres;
   }
 
-  hasGenre(genres: Array<string>): boolean{
+  containsGenre(genres: Array<string>): boolean{
     return genres.find(genre => this.genres.includes(genre)) != null;
+  }
+
+  hasSameGenres(genres: Array<string>): boolean{
+    const res = this.genres.filter(genre => genres.includes(genre));
+    return res.length === this.genres.length && res.length === genres.length;
   }
 }

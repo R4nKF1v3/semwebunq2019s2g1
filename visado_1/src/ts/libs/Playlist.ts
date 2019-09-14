@@ -1,4 +1,3 @@
-import UNQfy from "./unqfy";
 import Track from "./Track";
 
 export default class Playlist{
@@ -6,9 +5,9 @@ export default class Playlist{
   readonly genres: Array<string>;
   readonly id: number;
   readonly name: string;
-  readonly unqfy: UNQfy;
+  readonly unqfy;
 
-  constructor (id: number, name: string, genres: Array<string>, unqfy: UNQfy) {
+  constructor (id: number, name: string, genres: Array<string>, unqfy) {
     this.id = id;
     this.genres = genres;
     this.name = name;

@@ -7,8 +7,12 @@ class Track {
         this.duration = duration;
         this.genres = genres;
     }
-    hasGenre(genres) {
+    containsGenre(genres) {
         return genres.find(genre => this.genres.includes(genre)) != null;
+    }
+    hasSameGenres(genres) {
+        const res = this.genres.filter(genre => genres.includes(genre));
+        return res.length === this.genres.length && res.length === genres.length;
     }
 }
 exports.default = Track;

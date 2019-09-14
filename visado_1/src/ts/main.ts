@@ -1,12 +1,12 @@
 import fs = require('fs'); // necesitado para guardar/cargar unqfy
-import UNQfy from './libs/unqfy'; // importamos el modulo unqfy
+const unqmod = require('./libs/unqfy'); // importamos el modulo unqfy
 import process = require('process');
 
 // Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.
 function getUNQfy(filename = 'data.json') {
-  let unqfy = new UNQfy();
+  let unqfy = new unqmod.UNQfy();
   if (fs.existsSync(filename)) {
-    unqfy = UNQfy.load(filename);
+    unqfy = unqmod.UNQfy.load(filename);
   }
   return unqfy;
 }
@@ -49,7 +49,7 @@ function main() {
   console.log('arguments: ');
   const args = process.argv;
   args.forEach((argument, index) => console.log(index + ':' + argument));
-  const unqfy: UNQfy = getUNQfy();
+  const unqfy = getUNQfy();
   const returnStatement = unqfy.executeWith(args[2], args.slice(3, args.length));
   saveUNQfy(unqfy);
   return returnStatement;
