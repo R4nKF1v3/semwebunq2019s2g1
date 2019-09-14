@@ -11,4 +11,7 @@ export default class Track{
     this.genres = genres;
   }
 
+  hasGenre(genres: Array<string>): boolean{
+    return genres.find(genre => this.genres.includes(genre)) != null;
+  }
 }

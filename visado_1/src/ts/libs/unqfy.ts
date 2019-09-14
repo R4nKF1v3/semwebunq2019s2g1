@@ -214,14 +214,29 @@ export default class UNQfy {
 
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
-  getTracksMatchingGenres(genres : Array<string>) {
-    throw new Error("Not yet implemented");
+  getTracksMatchingGenres(genres : Array<string>): Array<Track> {
+    return this.allTracks().filter(track => track.hasGenre(genres));
   }
 
   // artistName: nombre de artista(string)
   // retorna: los tracks interpredatos por el artista con nombre artistName
-  getTracksMatchingArtist(artistName : string) {
+  getTracksMatchingArtist(artistName : string): Array<Track> {
     return this.getArtist(artistName).getAllTracks();
+  }
+
+  genericKeywordSearch(keyword: string){
+    const keyw = keyword.toLowerCase();
+    const artists = this.artists.filter(artist => artist.name.toLowerCase().includes(keyw));
+    const albums = this.allAlbums().filter(album => album.name.toLowerCase().includes(keyw));
+    const tracks = this.allTracks().filter(track => track.name.toLowerCase().includes(keyw));
+    console.log("Search results that match: " + keyword);
+    console.log("Artists:");
+    artists.forEach(artist => console.log(`Name: ${artist.name} Country: ${artist.country} Id: ${artist.id}`));
+    console.log("Albums:");;
+    albums.forEach(album => console.log(`Name: ${album.name} Year: ${album.year} Id: ${album.id}`));
+    console.log("Tracks:");;
+    tracks.forEach(track => console.log(`Name: ${track.name} Country: ${track.duration} Genres: ${track.genres} Id: ${track.id}`));
+    return {artists, albums, tracks};
   }
 
   // name: nombre de la playlist

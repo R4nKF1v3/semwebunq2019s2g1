@@ -7,5 +7,8 @@ class Track {
         this.duration = duration;
         this.genres = genres;
     }
+    hasGenre(genres) {
+        return genres.find(genre => this.genres.includes(genre)) != null;
+    }
 }
 exports.default = Track;
