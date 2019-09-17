@@ -89,8 +89,6 @@ export default class UNQfy {
       case "getArtistMostListened":
         this.checkParametersLength(args, 1, "getArtistMostListened");
         return this.getArtistMostListenedTracks(args[0])
-
-
       case "addArtist":
         this.checkParametersLength(args, 2, "addArtist");
         return this.addArtist({name: args[0], country: args[1]});
@@ -101,18 +99,17 @@ export default class UNQfy {
         this.checkParametersLength(args, 4, "addTrack");
         return this.addTrack(parseInt(args[0]), {name: args[1], duration: args[2], genres: args.slice(3, args.length)});
       case "getArtist":
-          this.checkParametersLength(args, 1, "getArtist");
-          return this.getArtist(args[0]);
+        this.checkParametersLength(args, 1, "getArtist");
+        return this.getArtist(args[0]);
       case "getAlbum":
-          this.checkParametersLength(args, 1, "getAlbum");
-          return this.getAlbumById(parseInt(args[0]));
+        this.checkParametersLength(args, 1, "getAlbum");
+        return this.getAlbumById(parseInt(args[0]));
       case "getTrack":
-          this.checkParametersLength(args, 1, "getTrack");
-          return this.getTrackById(parseInt(args[0]));
+        this.checkParametersLength(args, 1, "getTrack");
+        return this.getTrackById(parseInt(args[0]));
       case "getPlaylist":
-          this.checkParametersLength(args, 1, "getPlaylist");
-          //TODO: Que busque por ID y por nombre
-          return this.getPlaylistById(parseInt(args[0]));
+        this.checkParametersLength(args, 1, "getPlaylist");
+        return this.getPlaylistById(parseInt(args[0]));
       case "deleteArtist":
         this.checkParametersLength(args, 1, "deleteArtist");
         return this.deleteArtist(parseInt(args[0]));
@@ -132,7 +129,7 @@ export default class UNQfy {
         this.checkParametersLength(args, 1, "searchByName");
         return this.searchByName(args[0]);
       case "addPlaylist":
-        this.checkParametersLength(args, 1, "addPlaylist");
+        this.checkParametersLength(args, 3, "addPlaylist");
         const params = {name: args[0], duration: parseInt(args[1]), genres: args.slice(2, args.length)};
         return this.createPlaylist(params.name, params.genres, params.duration);
       case "listPlaylist":
@@ -208,7 +205,7 @@ export default class UNQfy {
         throw e;
       }
     }
-    foundedArtist.albums = foundedArtist.albums.map( (album: Artist) => album.name );
+    //foundedArtist.albums = foundedArtist.albums.map( (album: Artist) => album.name );
     return foundedArtist;
   }
 

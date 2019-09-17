@@ -5,8 +5,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>318</x>
-      <y>576</y>
+      <x>348</x>
+      <y>612</y>
       <w>204</w>
       <h>114</h>
     </coordinates>
@@ -25,8 +25,8 @@ bg=#FFE57C</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>120</x>
-      <y>738</y>
+      <x>150</x>
+      <y>774</y>
       <w>180</w>
       <h>114</h>
     </coordinates>
@@ -48,8 +48,8 @@ bg=#FFE57C</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>546</x>
-      <y>738</y>
+      <x>576</x>
+      <y>774</y>
       <w>204</w>
       <h>114</h>
     </coordinates>
@@ -73,8 +73,8 @@ bg=#FFE57C</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>0</x>
-      <y>318</y>
+      <x>30</x>
+      <y>354</y>
       <w>126</w>
       <h>114</h>
     </coordinates>
@@ -83,18 +83,19 @@ bg=#FFE57C</panel_attributes>
 -id: Number
 -genres: Array&lt;String&gt;
 --
-+duration(): Number
-+hasTrack(aTrack: Track): Boolean
-+getTracks(): Array&lt;Track&gt;
++fillPlaylist(unqfy: UNQfy)
 +deleteTrack(id: number)
++duration(): number
++hasTrack(trackToFind: Track): boolean
++getTracks(): Array&lt;Track&gt; 
 bg=#FFE57C</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>726</x>
-      <y>318</y>
+      <x>756</x>
+      <y>354</y>
       <w>126</w>
       <h>114</h>
     </coordinates>
@@ -112,8 +113,8 @@ bg=#7CFF9B</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>570</x>
-      <y>498</y>
+      <x>600</x>
+      <y>534</y>
       <w>42</w>
       <h>252</h>
     </coordinates>
@@ -126,8 +127,8 @@ artists</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>606</x>
-      <y>324</y>
+      <x>636</x>
+      <y>360</y>
       <w>132</w>
       <h>30</h>
     </coordinates>
@@ -140,8 +141,8 @@ users</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>120</x>
-      <y>324</y>
+      <x>150</x>
+      <y>360</y>
       <w>144</w>
       <h>30</h>
     </coordinates>
@@ -154,8 +155,8 @@ playlists</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>294</x>
-      <y>684</y>
+      <x>324</x>
+      <y>720</y>
       <w>144</w>
       <h>78</h>
     </coordinates>
@@ -168,8 +169,8 @@ tracks</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>294</x>
-      <y>762</y>
+      <x>324</x>
+      <y>798</y>
       <w>264</w>
       <h>30</h>
     </coordinates>
@@ -182,8 +183,8 @@ albums</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>516</x>
-      <y>426</y>
+      <x>546</x>
+      <y>462</y>
       <w>528</w>
       <h>198</h>
     </coordinates>
@@ -196,8 +197,8 @@ track</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>96</x>
-      <y>426</y>
+      <x>126</x>
+      <y>462</y>
       <w>234</w>
       <h>204</h>
     </coordinates>
@@ -210,10 +211,10 @@ tracks</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>252</x>
+      <x>282</x>
       <y>0</y>
       <w>360</w>
-      <h>504</h>
+      <h>540</h>
     </coordinates>
     <panel_attributes>UNQfy
 --
@@ -245,8 +246,11 @@ tracks</panel_attributes>
 +getTracksMatchingArtist(artistName: string): Array&lt;Track&gt;
 +searchByName(keyword: string): Object
 {Object.tracks Object.albums Object.artists}
-+userListenTo(userId: number, trackId: number)
-+mostListenedTo(artistId: number): Array&lt;Track&gt;
+
++listPlaylist(searchParam: any)
++listArtist(searchParam: number)
++listAlbum(searchParam: number)
++listTrack(searchParam: number)
 
 +createUser(name: string): User
 +getUser(arg: string): User
@@ -275,8 +279,8 @@ bg=#7CA8FF</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>966</x>
-      <y>318</y>
+      <x>996</x>
+      <y>354</y>
       <w>126</w>
       <h>114</h>
     </coordinates>
@@ -291,8 +295,8 @@ bg=#7CFF9B</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>846</x>
-      <y>336</y>
+      <x>876</x>
+      <y>372</y>
       <w>132</w>
       <h>30</h>
     </coordinates>

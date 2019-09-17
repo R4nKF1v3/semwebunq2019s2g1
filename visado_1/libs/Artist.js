@@ -30,7 +30,15 @@ class Artist {
     }
     getAllTracks() {
         var allTracks = [];
-        this.albums.forEach(album => allTracks = allTracks.concat(album.getTracks()));
+        console.log("Get all tracks:");
+        console.log(JSON.stringify(this.albums));
+        console.log(typeof (this.albums[0]));
+        this.albums.forEach(album => {
+            console.log("Object album:");
+            console.log(album);
+            const tracks = album.getTracks();
+            allTracks = allTracks.concat(tracks);
+        });
         return allTracks;
     }
 }

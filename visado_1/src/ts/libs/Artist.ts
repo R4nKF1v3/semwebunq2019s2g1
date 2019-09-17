@@ -17,7 +17,7 @@ export default class Artist {
 
   addAlbum(albumData: any, unqfy): Album {
     if (this.albumDoesNotExist(albumData)){
-      const newAlbum = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
+      const newAlbum: Album = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
       this.albums.push(newAlbum);
       return newAlbum;
     } else {
@@ -39,7 +39,15 @@ export default class Artist {
 
   getAllTracks(): Array<Track>{
     var allTracks: Array<Track> = [];
-    this.albums.forEach(album => allTracks = allTracks.concat(album.getTracks()))
+    console.log("Get all tracks:")
+    console.log(JSON.stringify(this.albums))
+    console.log(typeof(this.albums[0]))
+    this.albums.forEach(album => {
+      console.log("Object album:")
+      console.log(album)
+      const tracks = album.getTracks();
+      allTracks = allTracks.concat(tracks);
+    })
     return allTracks;
   }
 

@@ -34,11 +34,11 @@ export default class Playlist{
     return this.tracks.reduce( (acum, track) => acum + track.duration, 0);
   }
 
-  hasTrack(trackToFind: Track) {
+  hasTrack(trackToFind: Track): boolean {
     return this.tracks.some( track => track.id === trackToFind.id );
   }
 
-  getTracks() {
+  getTracks(): Array<Track> {
     return this.tracks;
   }
 
