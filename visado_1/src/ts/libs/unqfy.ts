@@ -9,6 +9,7 @@ import InvalidCommandError from "./exceptions/InvalidCommandError";
 import InsufficientParametersError from "./exceptions/InsufficientParametersError";
 import ElementAreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 import ElementNotFoundError from './exceptions/ElementNotFoundError';
+import HistoryEvent from './HistoryEvent';
 
 export default class UNQfy {
 
@@ -16,7 +17,8 @@ export default class UNQfy {
     artistId: 0,
     albumId: 0,
     trackId: 0,
-    playlistId: 0
+    playlistId: 0,
+    userId: 0
   };
   
   private artists: Array<Artist>;
@@ -57,13 +59,38 @@ export default class UNQfy {
   }
 
   getNewPlaylistId(): number {
-    this.idCounter.playlist++;
-    return this.idCounter.playlist;
+    this.idCounter.playlistId++;
+    return this.idCounter.playlistId;
+  }
+
+  getNewUserId(): number {
+    this.idCounter.userId++;
+    return this.idCounter.userId;
   }
 
   //Switch que ejecuta los comandos dependiendo del término
   executeWith(command: string, args: Array<string>): any{
     switch (command) {
+      case "createUser":
+        this.checkParametersLength(args, 1, "createUser");
+        return this.createUser(args[0])
+      case "getUser":
+        this.checkParametersLength(args, 1, "getUser");
+        return this.getUser(args[0])
+      case "userListenTo":
+        this.checkParametersLength(args, 2, "userListenTo");
+        return this.userListenTo(args[0], args[1])
+      case "userTrackHistory":
+        this.checkParametersLength(args, 1, "userTrackHistory");
+        return this.getTracksListenedBy(args[0])
+      case "userTimesListenedTo":
+        this.checkParametersLength(args, 2, "userTimesListenedTo");
+        return this.getTimesTrackListenedBy(args[0], args[1])
+      case "getArtistMostListened":
+        this.checkParametersLength(args, 1, "getArtistMostListened");
+        return this.getArtistMostListenedTracks(args[0])
+
+
       case "addArtist":
         this.checkParametersLength(args, 2, "addArtist");
         return this.addArtist({name: args[0], country: args[1]});
@@ -342,9 +369,92 @@ export default class UNQfy {
     console.log("generos: " + element.genres.reduce( (acum: string, g: string) => acum + " " + g, "") );
   }
 
+  createUser(name: string): User{
+    if (this.userDoesNotExist(name)){
+      const user = new User(this.getNewUserId(), name);
+      this.users.push(user);
+      return user;
+    } else {
+      throw new ElementAreadyExistsError(`User ${name}`)
+    }
+  }
 
-  //TODO: Funciones de creación y manipulación de usuarios
-  //createUser(name: string)
+  private userDoesNotExist(name: string): boolean{
+    return this.users.find(user => user.name === name) == null
+  }
+
+  getUser(arg: string): User{
+    let foundUser = null;
+    try {
+      foundUser = this.getUserById(parseInt(arg));
+    } catch(e){
+      if (e.constructor.name === 'ElementNotFoundError'){
+        foundUser = this.getUserByName(arg);
+      } else {
+        throw e;
+      }
+    }
+    return foundUser;
+  }
+
+  getUserById(id : number): User {
+    return this.genericSearch(id, "id", this.users, "user");
+  }
+
+  getUserByName(name : string): User {
+    return this.genericSearch(name, "name", this.users, "user");
+  }
+  
+  userListenTo(userId: string, trackId: string): HistoryEvent{
+    var track: Track;
+    try{
+      track = this.getTrackById(parseInt(trackId));
+    } catch(e){
+      track = this.getTrackByName(trackId);
+    }
+    var user = this.getUser(userId);
+    return user.listenTo(track);
+  }
+
+  getTracksListenedBy(userId: string): Array<Track>{
+    const user = this.getUser(userId);
+    return user.getAllTracksListenedTo();
+  }
+
+  getTimesTrackListenedBy(userId: string, trackId: string): number{
+    var track: Track;
+    try{
+      track = this.getTrackById(parseInt(trackId));
+    } catch(e){
+      track = this.getTrackByName(trackId);
+    }
+    var user = this.getUser(userId);
+    return user.getTimesTrackListened(track);
+  }
+
+  getArtistMostListenedTracks(artistId: string): Array<Track>{
+    const tracks = this.getArtist(artistId).getAllTracks();
+    tracks.sort((a: Track, b: Track)=>this.compareListenersForTracks(a, b));
+    return tracks.slice(0, 2);
+  }
+
+  compareListenersForTracks(track1: Track, track2: Track){
+    var times1 = this.timesListenedFor(track1);
+    var times2 = this.timesListenedFor(track2)
+    if ( times1 < times2 ){
+      return -1;
+    } else if (times1 > times2){
+      return 1;
+    } else{
+      return 0;
+    }
+  }
+
+  timesListenedFor(track: Track): number{
+    var times = 0;
+    this.users.forEach(user => times += user.getTimesTrackListened(track))
+    return times;
+  }
 
   save(filename : string) {
     const serializedData = picklify.picklify(this);
