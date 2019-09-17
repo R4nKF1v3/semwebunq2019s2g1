@@ -17,7 +17,7 @@ export default class Artist {
 
   addAlbum(albumData: any, unqfy): Album {
     if (this.albumDoesNotExist(albumData)){
-      const newAlbum = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year);
+      const newAlbum = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
       this.albums.push(newAlbum);
       return newAlbum;
     } else {
@@ -33,11 +33,8 @@ export default class Artist {
     return this.albums;
   }
 
-  deleteAlbum(albumId: number, unqfy) {
-    this.albums.find(album => album.id === albumId).getTracks().forEach(track =>
-      unqfy.deleteTrackFromPlaylists(track.id)
-    );
-    this.albums = this.albums.filter( album => album.id !== albumId );
+  deleteAlbum(albumToDelete: Album) {
+    this.albums = this.albums.filter( album => album.id !== albumToDelete.id );
   }
 
   getAllTracks(): Array<Track>{
@@ -45,4 +42,5 @@ export default class Artist {
     this.albums.forEach(album => allTracks = allTracks.concat(album.getTracks()))
     return allTracks;
   }
+
 }

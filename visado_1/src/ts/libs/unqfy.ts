@@ -10,12 +10,13 @@ import InsufficientParametersError from "./exceptions/InsufficientParametersErro
 import ElementAreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 import ElementNotFoundError from './exceptions/ElementNotFoundError';
 
-class UNQfy {
+export default class UNQfy {
 
   private idCounter: any = {
     artistId: 0,
     albumId: 0,
     trackId: 0,
+    playlistId: 0
   };
   
   private artists: Array<Artist>;
@@ -53,6 +54,11 @@ class UNQfy {
   getNewTrackId(): number {
     this.idCounter.trackId++;
     return this.idCounter.trackId;
+  }
+
+  getNewPlaylistId(): number {
+    this.idCounter.playlist++;
+    return this.idCounter.playlist;
   }
 
   //Switch que ejecuta los comandos dependiendo del término
@@ -98,6 +104,10 @@ class UNQfy {
       case "searchByName":
         this.checkParametersLength(args, 1, "searchByName");
         return this.searchByName(args[0]);
+      case "addPlaylist":
+        this.checkParametersLength(args, 1, "addPlaylist");
+        const params = {name: args[1], duration: parseInt(args[2]), genres: args.slice(3, args.length)};
+        return this.createPlaylist(params.name, params.genres, params.duration);
       default:
         throw new InvalidCommandError(command);
     }
@@ -147,78 +157,86 @@ class UNQfy {
   }
 
   private getArtist(arg: string): Artist{
+    let foundedArtist = null;
     try {
-      return this.getArtistById(parseInt(arg));
+      foundedArtist = this.getArtistById(parseInt(arg));
     } catch(e){
-      if (e.typeof(ElementNotFoundError)){
-        return this.getArtistByName(arg);
+      if (e.constructor.name === 'ElementNotFoundError'){
+        foundedArtist = this.getArtistByName(arg);
       } else {
         throw e;
       }
     }
+    foundedArtist.albums = foundedArtist.albums.map( (album: Artist) => album.name );
+    return foundedArtist;
   }
 
-  private genericSearch(elementId: number, elementsArray: Array<any>) {
-    const foundElement: any = elementsArray.find( element => element.id === elementId);
-    if (foundElement != null){
-      return foundElement;
-    }else {
-      throw new ElementNotFoundError()
-    }
+  private genericSearch(elementId: any, searchParam: string, elementsArray: Array<any>, description: string) {
+    const foundedElements: any = elementsArray.filter( element => element[searchParam] === elementId);
+    if (foundedElements.length === 1)
+      return foundedElements[0];
+    else if (foundedElements.length > 1)
+      throw new ElementNotFoundError('More than one match while searching a ' + description + ' for the id ' + elementId);
+    else 
+      throw new ElementNotFoundError('Element could not be found the element with id ' + elementId + ' while searching for ' + description);
   }
 
   getArtistById(id : number): Artist {
-    return this.genericSearch(id, this.artists);
+    return this.genericSearch(id, "id", this.artists, "artist");
   }
 
-  getArtistByName(name: string): Artist{
-    const foundElement: any = this.artists.filter( element => element.name === name);
-    if (foundElement.length === 1){
-      console.log(JSON.stringify(foundElement));
-      return foundElement[0];
-    }else if (foundElement.length === 0) {
-      throw new ElementNotFoundError('Artist not found');
-    } else {
-      throw new ElementNotFoundError('More than one match for the Artist');
-    }
+  getArtistByName(name : string): Artist {
+    return this.genericSearch(name, "name", this.artists, "artist");
   }
 
   getAlbumById(id : number): Album {
-    return this.genericSearch(id, this.allAlbums());
+    return this.genericSearch(id, "id", this.allAlbums(), "album");
+  }
+
+  getAlbumByName(name : string): Album {
+    return this.genericSearch(name, "name", this.allAlbums(), "album");
   }
 
   getTrackById(id : number): Track{
-    return this.genericSearch(id, this.allTracks());
+    return this.genericSearch(id, "id", this.allTracks(), "track");
+  }
+
+  getTrackByName(name : string): Track{
+    return this.genericSearch(name, "name", this.allTracks(), "track");
   }
 
   getPlaylistById(id : number): Playlist {
-    return this.genericSearch(id, this.playlists);
+    return this.genericSearch(id, "id", this.playlists, "playlist");
+  }
+
+  getPlaylistByName(name : string): Playlist {
+    return this.genericSearch(name, "name", this.playlists, "playlist");
   }
 
   deleteArtist(artistId: number) {
-    const artistToDelete = this.artists.find( artist => artist.id !== artistId);
-    artistToDelete.getAlbums().forEach(album => 
-      artistToDelete.deleteAlbum(album.id, this)
-    );
+    const artistToDelete = this.getArtistById(artistId);
+    const artistAlbums = artistToDelete.getAlbums();
+    artistAlbums.forEach( album => this.deleteAlbum(album.id) );
     this.artists = this.artists.filter( artist => artist.id !== artistId);
   }
   
   deleteAlbum(albumId: number) {
-    this.artists.forEach( artist => 
-      artist.deleteAlbum(albumId, this)
-    )
+    const albumToDelete = this.getAlbumById(albumId);
+    const albumTracks = albumToDelete.getTracks();
+    albumTracks.forEach( track => this.deleteTrack(track.id) )
+
+    this.artists.forEach( artist => artist.deleteAlbum(albumToDelete))
   }
 
   deleteTrack(trackId: number) {
-    this.allAlbums().forEach( album =>
-      album.deleteTrack(trackId)
-    );
+    const trackToDelete = this.getTrackById(trackId);
+    this.allAlbums().forEach( album => album.deleteTrack(trackToDelete));
     this.deleteTrackFromPlaylists(trackId);
   }
 
-  deleteTrackFromPlaylists(id: number){
+  deleteTrackFromPlaylists(trackId: number){
     this.playlists.forEach(playlist =>
-      playlist.deleteTrack(id)
+      playlist.deleteTrack(trackId)
     );
   }
 
@@ -248,13 +266,9 @@ class UNQfy {
   // maxDuration: duración en segundos
   // retorna: la nueva playlist creada
   createPlaylist(name : string, genresToInclude : Array<string>, maxDuration : number) {
-  /*** Crea una playlist y la agrega a unqfy. ***
-    El objeto playlist creado debe soportar (al menos):
-      * una propiedad name (string)
-      * un metodo duration() que retorne la duración de la playlist.
-      * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
-  */
-
+    const newPlaylist = new Playlist(this.getNewPlaylistId(), name, genresToInclude, this, maxDuration);
+    this.playlists.push(newPlaylist);
+    return newPlaylist;
   }
 
   //TODO: Funciones de creación y manipulación de usuarios
