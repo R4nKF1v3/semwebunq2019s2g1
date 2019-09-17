@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Track {
-    constructor(id, name, duration, genres) {
+    constructor(id, name, duration, genres, album) {
         this.id = id;
         this.name = name;
         this.duration = duration;
