@@ -6,7 +6,7 @@
     <id>UMLClass</id>
     <coordinates>
       <x>318</x>
-      <y>504</y>
+      <y>576</y>
       <w>204</w>
       <h>114</h>
     </coordinates>
@@ -26,7 +26,7 @@ bg=#FFE57C</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>120</x>
-      <y>666</y>
+      <y>738</y>
       <w>180</w>
       <h>114</h>
     </coordinates>
@@ -49,7 +49,7 @@ bg=#FFE57C</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>546</x>
-      <y>666</y>
+      <y>738</y>
       <w>204</w>
       <h>114</h>
     </coordinates>
@@ -74,7 +74,7 @@ bg=#FFE57C</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>246</y>
+      <y>318</y>
       <w>126</w>
       <h>114</h>
     </coordinates>
@@ -94,7 +94,7 @@ bg=#FFE57C</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>726</x>
-      <y>246</y>
+      <y>318</y>
       <w>126</w>
       <h>114</h>
     </coordinates>
@@ -103,7 +103,9 @@ bg=#FFE57C</panel_attributes>
 -id: Number
 -name: String
 --
-+listenTo(aTrack: Track)
++listenTo(track: Track): HistoryEvent
++getAllTracksListenedTo(): Array&lt;Track&gt;
++getTimesTrackListened(track: Track): number
 bg=#7CFF9B</panel_attributes>
     <additional_attributes/>
   </element>
@@ -111,7 +113,7 @@ bg=#7CFF9B</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>570</x>
-      <y>426</y>
+      <y>498</y>
       <w>42</w>
       <h>252</h>
     </coordinates>
@@ -125,7 +127,7 @@ artists</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>606</x>
-      <y>252</y>
+      <y>324</y>
       <w>132</w>
       <h>30</h>
     </coordinates>
@@ -139,7 +141,7 @@ users</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>120</x>
-      <y>252</y>
+      <y>324</y>
       <w>144</w>
       <h>30</h>
     </coordinates>
@@ -153,7 +155,7 @@ playlists</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>294</x>
-      <y>612</y>
+      <y>684</y>
       <w>144</w>
       <h>78</h>
     </coordinates>
@@ -167,7 +169,7 @@ tracks</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>294</x>
-      <y>690</y>
+      <y>762</y>
       <w>264</w>
       <h>30</h>
     </coordinates>
@@ -181,21 +183,21 @@ albums</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>516</x>
-      <y>354</y>
-      <w>258</w>
+      <y>426</y>
+      <w>528</w>
       <h>198</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
 m1=0..*
 m2=0..*
-tracksListened: Dictionary</panel_attributes>
-    <additional_attributes>10.0;300.0;390.0;300.0;390.0;10.0</additional_attributes>
+track</panel_attributes>
+    <additional_attributes>10.0;300.0;840.0;300.0;840.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>96</x>
-      <y>354</y>
+      <y>426</y>
       <w>234</w>
       <h>204</h>
     </coordinates>
@@ -209,9 +211,9 @@ tracks</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>252</x>
-      <y>24</y>
+      <y>0</y>
       <w>360</w>
-      <h>408</h>
+      <h>504</h>
     </coordinates>
     <panel_attributes>UNQfy
 --
@@ -245,6 +247,18 @@ tracks</panel_attributes>
 {Object.tracks Object.albums Object.artists}
 +userListenTo(userId: number, trackId: number)
 +mostListenedTo(artistId: number): Array&lt;Track&gt;
+
++createUser(name: string): User
++getUser(arg: string): User
++getUserById(id : number): User 
++getUserByName(name : string): User 
++userListenTo(userId: string, trackId: string): HistoryEvent
++getTracksListenedBy(userId: string): Array&lt;Track&gt;
++getTimesTrackListenedBy(userId: string, trackId: string): number
++getArtistMostListenedTracks(artistId: string): Array&lt;Track&gt;
++compareListenersForTracks(track1: Track, track2: Track)
++timesListenedFor(track: Track): number{
+
 +save(filename: string)
 _+load(filename: string): UNQfy_
 
@@ -253,6 +267,7 @@ _+load(filename: string): UNQfy_
 -checkParametersLength(parameters: Array&lt;string&gt;, length: number, caseType: string)
 -genericSearch(elementId: number, elements: Array&lt;any&gt;): any
 -getArtist(arg: string): Artist
+-userDoesNotExist(name: string): boolean
 
 bg=#7CA8FF</panel_attributes>
     <additional_attributes/>
@@ -261,31 +276,23 @@ bg=#7CA8FF</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>966</x>
-      <y>246</y>
+      <y>318</y>
       <w>126</w>
       <h>114</h>
     </coordinates>
     <panel_attributes>HistoryEvent
 --
+date: Date
+--
+hasSameTrack(list: Array&lt;HistoryEvent&gt;): boolean
 bg=#7CFF9B</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>354</x>
-      <y>12</y>
-      <w>108</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;160.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
       <x>846</x>
-      <y>264</y>
+      <y>336</y>
       <w>132</w>
       <h>30</h>
     </coordinates>

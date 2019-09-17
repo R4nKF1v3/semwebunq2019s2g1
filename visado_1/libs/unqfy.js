@@ -17,7 +17,8 @@ class UNQfy {
             artistId: 0,
             albumId: 0,
             trackId: 0,
-            playlistId: 0
+            playlistId: 0,
+            userId: 0
         };
         this.artists = [];
         this.playlists = [];
@@ -42,12 +43,34 @@ class UNQfy {
         return this.idCounter.trackId;
     }
     getNewPlaylistId() {
-        this.idCounter.playlist++;
-        return this.idCounter.playlist;
+        this.idCounter.playlistId++;
+        return this.idCounter.playlistId;
+    }
+    getNewUserId() {
+        this.idCounter.userId++;
+        return this.idCounter.userId;
     }
     //Switch que ejecuta los comandos dependiendo del término
     executeWith(command, args) {
         switch (command) {
+            case "createUser":
+                this.checkParametersLength(args, 1, "createUser");
+                return this.createUser(args[0]);
+            case "getUser":
+                this.checkParametersLength(args, 1, "getUser");
+                return this.getUser(args[0]);
+            case "userListenTo":
+                this.checkParametersLength(args, 2, "userListenTo");
+                return this.userListenTo(args[0], args[1]);
+            case "userTrackHistory":
+                this.checkParametersLength(args, 1, "userTrackHistory");
+                return this.getTracksListenedBy(args[0]);
+            case "userTimesListenedTo":
+                this.checkParametersLength(args, 2, "userTimesListenedTo");
+                return this.getTimesTrackListenedBy(args[0], args[1]);
+            case "getArtistMostListened":
+                this.checkParametersLength(args, 1, "getArtistMostListened");
+                return this.getArtistMostListenedTracks(args[0]);
             case "addArtist":
                 this.checkParametersLength(args, 2, "addArtist");
                 return this.addArtist({ name: args[0], country: args[1] });
@@ -231,8 +254,89 @@ class UNQfy {
         this.playlists.push(newPlaylist);
         return newPlaylist;
     }
-    //TODO: Funciones de creación y manipulación de usuarios
-    //createUser(name: string)
+    createUser(name) {
+        if (this.userDoesNotExist(name)) {
+            const user = new User_1.default(this.getNewUserId(), name);
+            this.users.push(user);
+            return user;
+        }
+        else {
+            throw new ElementAlreadyExistsError_1.default(`User ${name}`);
+        }
+    }
+    userDoesNotExist(name) {
+        return this.users.find(user => user.name === name) == null;
+    }
+    getUser(arg) {
+        let foundUser = null;
+        try {
+            foundUser = this.getUserById(parseInt(arg));
+        }
+        catch (e) {
+            if (e.constructor.name === 'ElementNotFoundError') {
+                foundUser = this.getUserByName(arg);
+            }
+            else {
+                throw e;
+            }
+        }
+        return foundUser;
+    }
+    getUserById(id) {
+        return this.genericSearch(id, "id", this.users, "user");
+    }
+    getUserByName(name) {
+        return this.genericSearch(name, "name", this.users, "user");
+    }
+    userListenTo(userId, trackId) {
+        var track;
+        try {
+            track = this.getTrackById(parseInt(trackId));
+        }
+        catch (e) {
+            track = this.getTrackByName(trackId);
+        }
+        var user = this.getUser(userId);
+        return user.listenTo(track);
+    }
+    getTracksListenedBy(userId) {
+        const user = this.getUser(userId);
+        return user.getAllTracksListenedTo();
+    }
+    getTimesTrackListenedBy(userId, trackId) {
+        var track;
+        try {
+            track = this.getTrackById(parseInt(trackId));
+        }
+        catch (e) {
+            track = this.getTrackByName(trackId);
+        }
+        var user = this.getUser(userId);
+        return user.getTimesTrackListened(track);
+    }
+    getArtistMostListenedTracks(artistId) {
+        const tracks = this.getArtist(artistId).getAllTracks();
+        tracks.sort((a, b) => this.compareListenersForTracks(a, b));
+        return tracks.slice(0, 2);
+    }
+    compareListenersForTracks(track1, track2) {
+        var times1 = this.timesListenedFor(track1);
+        var times2 = this.timesListenedFor(track2);
+        if (times1 < times2) {
+            return -1;
+        }
+        else if (times1 > times2) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+    timesListenedFor(track) {
+        var times = 0;
+        this.users.forEach(user => times += user.getTimesTrackListened(track));
+        return times;
+    }
     save(filename) {
         const serializedData = picklify.picklify(this);
         fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));
