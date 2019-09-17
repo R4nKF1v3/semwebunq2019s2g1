@@ -133,8 +133,20 @@ export default class UNQfy {
         return this.searchByName(args[0]);
       case "addPlaylist":
         this.checkParametersLength(args, 1, "addPlaylist");
-        const params = {name: args[1], duration: parseInt(args[2]), genres: args.slice(3, args.length)};
+        const params = {name: args[0], duration: parseInt(args[1]), genres: args.slice(2, args.length)};
         return this.createPlaylist(params.name, params.genres, params.duration);
+      case "listPlaylist":
+        this.checkParametersLength(args, 1, "listPlaylist");
+        this.listPlaylist(parseInt(args[0]))
+      case "listArtist":
+          this.checkParametersLength(args, 1, "listArtist");
+          this.listArtist(parseInt(args[0]))
+      case "listAlbum":
+          this.checkParametersLength(args, 1, "listAlbum");
+          this.listAlbum(parseInt(args[0]))
+      case "listTrack":
+          this.checkParametersLength(args, 1, "listTrack");
+          this.listTrack(parseInt(args[0]))
       default:
         throw new InvalidCommandError(command);
     }
@@ -180,6 +192,8 @@ export default class UNQfy {
   // retorna: el nuevo track creado
   addTrack(albumId : number, trackData : any): Track {
     let album = this.getAlbumById(albumId);
+    if (album.getTracks().some( track => trackData.name === track.name) ) 
+      throw new ElementAreadyExistsError(`Track with name ${trackData.name} already exists in album ${album.name}`)
     return album.addTrack(trackData, this)
   }
 
@@ -205,7 +219,7 @@ export default class UNQfy {
     else if (foundedElements.length > 1)
       throw new ElementNotFoundError('More than one match while searching a ' + description + ' for the id ' + elementId);
     else 
-      throw new ElementNotFoundError('Element could not be found the element with id ' + elementId + ' while searching for ' + description);
+      throw new ElementNotFoundError('Element with id ' + elementId + ' could not be found while searching for ' + description);
   }
 
   getArtistById(id : number): Artist {
@@ -293,9 +307,66 @@ export default class UNQfy {
   // maxDuration: duración en segundos
   // retorna: la nueva playlist creada
   createPlaylist(name : string, genresToInclude : Array<string>, maxDuration : number) {
-    const newPlaylist = new Playlist(this.getNewPlaylistId(), name, genresToInclude, this, maxDuration);
+    const newPlaylist = new Playlist(this.getNewPlaylistId(), name, genresToInclude, maxDuration);
+    newPlaylist.fillPlaylist(this);
     this.playlists.push(newPlaylist);
+    console.log(this.playlists)
     return newPlaylist;
+  }
+
+  listPlaylist(searchParam: any) {
+    let element: Playlist = null;
+    element = this.getPlaylistById(searchParam);
+
+    console.log("Playlist (id: " + element.id + "):");
+    console.log("---------");
+    console.log("nombre: " + element.name);
+    console.log("duración: " + element.duration() + " segundos");
+    console.log("generos: " + element.genres.reduce( (acum: string, g: string) => acum + " " + g, "") );
+    console.log("canciones: ");
+    for (let track of element.getTracks()) {
+      console.log(`  nombre: ${track.name}, duración: ${track.duration}, generos: ${track.genres.reduce( (acum, g) => " " + g, "")} `);
+    }
+  }
+
+  listArtist(searchParam: number) {
+    let element: Artist = null;
+    element = this.getArtistById(searchParam);
+
+    console.log("Artista (id: " + element.id + "):");
+    console.log("---------");
+    console.log("nombre: " + element.name);
+    console.log("país: " + element.country);
+    console.log("albums: ");
+    for (let album of element.getAlbums()) {
+      console.log(`  nombre: ${album.name}, año: ${album.year}`);
+    }
+  }
+
+  listAlbum(searchParam: number) {
+    let element: Album = null;
+    element = this.getAlbumById(searchParam);
+
+    console.log("Album (id: " + element.id + "):");
+    console.log("---------");
+    console.log("nombre: " + element.name);
+    console.log("año: " + element.year);
+    console.log("canciones: ");
+    for (let track of element.getTracks()) {
+      console.log(`  nombre: ${track.name}, duración: ${track.duration}, generos: ${track.genres.reduce( (acum, g) => " " + g, "")} `);
+    }
+  }
+
+  listTrack(searchParam: number) {
+    let element: Track = null;
+    element = this.getTrackById(searchParam);
+
+    console.log("Canción (id: " + element.id + "):");
+    console.log("---------");
+    console.log("nombre: " + element.name);
+    console.log("duración: " + element.duration);
+    console.log("canciones: ");
+    console.log("generos: " + element.genres.reduce( (acum: string, g: string) => acum + " " + g, "") );
   }
 
   createUser(name: string): User{
