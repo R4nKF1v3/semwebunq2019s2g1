@@ -1,19 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Playlist {
-    constructor(id, name, genres, unqfy, maxDuration) {
+    constructor(id, name, genres, maxDuration) {
         this.tracks = [];
         this.id = id;
         this.genres = genres;
         this.name = name;
-        this.unqfy = unqfy;
         this.maxDuration = maxDuration;
-        this.fillPlaylist();
     }
-    fillPlaylist() {
+    fillPlaylist(unqfy) {
         this.tracks = [];
         let totalDuration = 0;
-        for (let currentTrack of this.unqfy.getTracksMatchingGenres(this.genres)) {
+        for (let currentTrack of unqfy.getTracksMatchingGenres(this.genres)) {
             if (this.maxDuration < (totalDuration + currentTrack.duration))
                 break;
             this.tracks.push(currentTrack);
@@ -27,6 +25,9 @@ class Playlist {
     }
     hasTrack(trackToFind) {
         return this.tracks.some(track => track.id === trackToFind.id);
+    }
+    getTracks() {
+        return this.tracks;
     }
 }
 exports.default = Playlist;

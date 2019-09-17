@@ -90,8 +90,20 @@ class UNQfy {
                 return this.searchByName(args[0]);
             case "addPlaylist":
                 this.checkParametersLength(args, 1, "addPlaylist");
-                const params = { name: args[1], duration: parseInt(args[2]), genres: args.slice(3, args.length) };
+                const params = { name: args[0], duration: parseInt(args[1]), genres: args.slice(2, args.length) };
                 return this.createPlaylist(params.name, params.genres, params.duration);
+            case "listPlaylist":
+                this.checkParametersLength(args, 1, "listPlaylist");
+                this.listPlaylist(parseInt(args[0]));
+            case "listArtist":
+                this.checkParametersLength(args, 1, "listArtist");
+                this.listArtist(parseInt(args[0]));
+            case "listAlbum":
+                this.checkParametersLength(args, 1, "listAlbum");
+                this.listAlbum(parseInt(args[0]));
+            case "listTrack":
+                this.checkParametersLength(args, 1, "listTrack");
+                this.listTrack(parseInt(args[0]));
             default:
                 throw new InvalidCommandError_1.default(command);
         }
@@ -133,6 +145,8 @@ class UNQfy {
     // retorna: el nuevo track creado
     addTrack(albumId, trackData) {
         let album = this.getAlbumById(albumId);
+        if (album.getTracks().some(track => trackData.name === track.name))
+            throw new ElementAlreadyExistsError_1.default(`Track with name ${trackData.name} already exists in album ${album.name}`);
         return album.addTrack(trackData, this);
     }
     getArtist(arg) {
@@ -158,7 +172,7 @@ class UNQfy {
         else if (foundedElements.length > 1)
             throw new ElementNotFoundError_1.default('More than one match while searching a ' + description + ' for the id ' + elementId);
         else
-            throw new ElementNotFoundError_1.default('Element could not be found the element with id ' + elementId + ' while searching for ' + description);
+            throw new ElementNotFoundError_1.default('Element with id ' + elementId + ' could not be found while searching for ' + description);
     }
     getArtistById(id) {
         return this.genericSearch(id, "id", this.artists, "artist");
@@ -227,9 +241,58 @@ class UNQfy {
     // maxDuration: duración en segundos
     // retorna: la nueva playlist creada
     createPlaylist(name, genresToInclude, maxDuration) {
-        const newPlaylist = new Playlist_1.default(this.getNewPlaylistId(), name, genresToInclude, this, maxDuration);
+        const newPlaylist = new Playlist_1.default(this.getNewPlaylistId(), name, genresToInclude, maxDuration);
+        newPlaylist.fillPlaylist(this);
         this.playlists.push(newPlaylist);
+        console.log(this.playlists);
         return newPlaylist;
+    }
+    listPlaylist(searchParam) {
+        let element = null;
+        element = this.getPlaylistById(searchParam);
+        console.log("Playlist (id: " + element.id + "):");
+        console.log("---------");
+        console.log("nombre: " + element.name);
+        console.log("duración: " + element.duration() + " segundos");
+        console.log("generos: " + element.genres.reduce((acum, g) => acum + " " + g, ""));
+        console.log("canciones: ");
+        for (let track of element.getTracks()) {
+            console.log(`  nombre: ${track.name}, duración: ${track.duration}, generos: ${track.genres.reduce((acum, g) => " " + g, "")} `);
+        }
+    }
+    listArtist(searchParam) {
+        let element = null;
+        element = this.getArtistById(searchParam);
+        console.log("Artista (id: " + element.id + "):");
+        console.log("---------");
+        console.log("nombre: " + element.name);
+        console.log("país: " + element.country);
+        console.log("albums: ");
+        for (let album of element.getAlbums()) {
+            console.log(`  nombre: ${album.name}, año: ${album.year}`);
+        }
+    }
+    listAlbum(searchParam) {
+        let element = null;
+        element = this.getAlbumById(searchParam);
+        console.log("Album (id: " + element.id + "):");
+        console.log("---------");
+        console.log("nombre: " + element.name);
+        console.log("año: " + element.year);
+        console.log("canciones: ");
+        for (let track of element.getTracks()) {
+            console.log(`  nombre: ${track.name}, duración: ${track.duration}, generos: ${track.genres.reduce((acum, g) => " " + g, "")} `);
+        }
+    }
+    listTrack(searchParam) {
+        let element = null;
+        element = this.getTrackById(searchParam);
+        console.log("Canción (id: " + element.id + "):");
+        console.log("---------");
+        console.log("nombre: " + element.name);
+        console.log("duración: " + element.duration);
+        console.log("canciones: ");
+        console.log("generos: " + element.genres.reduce((acum, g) => acum + " " + g, ""));
     }
     //TODO: Funciones de creación y manipulación de usuarios
     //createUser(name: string)
