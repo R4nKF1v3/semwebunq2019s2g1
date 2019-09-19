@@ -104,7 +104,7 @@ export default class UNQfy {
       case "getAlbum":
         this.checkParametersLength(args, 1, "getAlbum");
         return this.getAlbumById(parseInt(args[0]));
-      case "getTrack":
+      case "d":
         this.checkParametersLength(args, 1, "getTrack");
         return this.getTrackById(parseInt(args[0]));
       case "getPlaylist":
@@ -135,15 +135,19 @@ export default class UNQfy {
       case "listPlaylist":
         this.checkParametersLength(args, 1, "listPlaylist");
         this.listPlaylist(parseInt(args[0]))
+        break;
       case "listArtist":
-          this.checkParametersLength(args, 1, "listArtist");
-          this.listArtist(parseInt(args[0]))
+        this.checkParametersLength(args, 1, "listArtist");
+        this.listArtist(parseInt(args[0]))
+        break;
       case "listAlbum":
-          this.checkParametersLength(args, 1, "listAlbum");
-          this.listAlbum(parseInt(args[0]))
+        this.checkParametersLength(args, 1, "listAlbum");
+        this.listAlbum(parseInt(args[0]))
+        break;
       case "listTrack":
-          this.checkParametersLength(args, 1, "listTrack");
-          this.listTrack(parseInt(args[0]))
+        this.checkParametersLength(args, 1, "listTrack");
+        this.listTrack(parseInt(args[0]))
+        break;
       default:
         throw new InvalidCommandError(command);
     }
@@ -205,7 +209,6 @@ export default class UNQfy {
         throw e;
       }
     }
-    //foundedArtist.albums = foundedArtist.albums.map( (album: Artist) => album.name );
     return foundedArtist;
   }
 
@@ -461,7 +464,7 @@ export default class UNQfy {
   static load(filename : string) {
     const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
     //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-    const classes = [UNQfy, Artist, Album, Track, Playlist, User];
+    const classes = [UNQfy, Artist, Album, Track, Playlist, User, HistoryEvent];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
 }

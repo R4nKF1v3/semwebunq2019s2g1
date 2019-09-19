@@ -11,6 +11,7 @@ const InvalidCommandError_1 = require("./exceptions/InvalidCommandError");
 const InsufficientParametersError_1 = require("./exceptions/InsufficientParametersError");
 const ElementAlreadyExistsError_1 = require("./exceptions/ElementAlreadyExistsError");
 const ElementNotFoundError_1 = require("./exceptions/ElementNotFoundError");
+const HistoryEvent_1 = require("./HistoryEvent");
 class UNQfy {
     constructor() {
         this.idCounter = {
@@ -117,15 +118,19 @@ class UNQfy {
             case "listPlaylist":
                 this.checkParametersLength(args, 1, "listPlaylist");
                 this.listPlaylist(parseInt(args[0]));
+                break;
             case "listArtist":
                 this.checkParametersLength(args, 1, "listArtist");
                 this.listArtist(parseInt(args[0]));
+                break;
             case "listAlbum":
                 this.checkParametersLength(args, 1, "listAlbum");
                 this.listAlbum(parseInt(args[0]));
+                break;
             case "listTrack":
                 this.checkParametersLength(args, 1, "listTrack");
                 this.listTrack(parseInt(args[0]));
+                break;
             default:
                 throw new InvalidCommandError_1.default(command);
         }
@@ -184,7 +189,6 @@ class UNQfy {
                 throw e;
             }
         }
-        //foundedArtist.albums = foundedArtist.albums.map( (album: Artist) => album.name );
         return foundedArtist;
     }
     genericSearch(elementId, searchParam, elementsArray, description) {
@@ -406,7 +410,7 @@ class UNQfy {
     static load(filename) {
         const serializedData = fs.readFileSync(filename, { encoding: 'utf-8' });
         //COMPLETAR POR EL ALUMNO: Agregar a la lista todas las clases que necesitan ser instanciadas
-        const classes = [UNQfy, Artist_1.default, Album_1.default, Track_1.default, Playlist_1.default, User_1.default];
+        const classes = [UNQfy, Artist_1.default, Album_1.default, Track_1.default, Playlist_1.default, User_1.default, HistoryEvent_1.default];
         return picklify.unpicklify(JSON.parse(serializedData), classes);
     }
 }
