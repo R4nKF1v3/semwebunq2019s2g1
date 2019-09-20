@@ -20,7 +20,7 @@ class Artist {
         }
     }
     albumDoesNotExist(albumData) {
-        return this.albums.find(album => album.name === albumData.name && album.year === albumData.year) == null;
+        return !this.albums.some(album => album.name === albumData.name && album.year === albumData.year);
     }
     getAlbums() {
         return this.albums;

@@ -93,8 +93,32 @@ node main.js userTrackHistory Roberta
 node main.js userTimesListenedTo Roberta 12
 node main.js userTimesListenedTo 1 U2_track2
 
+node main.js getArtistMostListened 1
+node main.js getArtistMostListened Sabina
+node main.js getArtistMostListened ACDC
 
+node main.js getTrack 4
 
+node main.js deleteTrack U2_track4
+node main.js deleteTrack 5
+node main.js deleteTrack U2_track6
 
+node main.js getAlbum 2
 
+node main.js deleteAlbum U2_alb1
+node main.js deleteAlbum 2
 
+node main.js getArtist 1
+
+node main.js deleteArtist 1
+node main.js deleteArtist ACDC
+node main.js deleteArtist Sabina
+
+node main.js getPlaylist 1
+node main.js getPlaylist 2
+
+node main.js deletePlaylist 1
+node main.js deletePlaylist Folklore
+
+node main.js deleteUser 1
+node main.js deleteUser Roberta

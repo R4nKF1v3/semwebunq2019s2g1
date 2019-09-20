@@ -76,7 +76,10 @@ export default class UNQfy {
         return this.createUser(args[0])
       case "getUser":
         this.checkParametersLength(args, 1, "getUser");
-        return this.getUser(args[0])
+        return this.getUserById(args[0])
+      case "deleteUser":
+        this.checkParametersLength(args, 1, "deleteUser");
+        return this.deleteUser(args[0])
       case "userListenTo":
         this.checkParametersLength(args, 2, "userListenTo");
         return this.userListenTo(args[0], args[1])
@@ -100,25 +103,28 @@ export default class UNQfy {
         return this.addTrack(parseInt(args[0]), {name: args[1], duration: args[2], genres: args.slice(3, args.length)});
       case "getArtist":
         this.checkParametersLength(args, 1, "getArtist");
-        return this.getArtist(args[0]);
+        return this.getArtistById(args[0]);
       case "getAlbum":
         this.checkParametersLength(args, 1, "getAlbum");
-        return this.getAlbumById(parseInt(args[0]));
-      case "d":
+        return this.getAlbumById(args[0]);
+      case "getTrack":
         this.checkParametersLength(args, 1, "getTrack");
-        return this.getTrackById(parseInt(args[0]));
+        return this.getTrackById(args[0]);
       case "getPlaylist":
         this.checkParametersLength(args, 1, "getPlaylist");
-        return this.getPlaylistById(parseInt(args[0]));
+        return this.getPlaylistById(args[0]);
       case "deleteArtist":
         this.checkParametersLength(args, 1, "deleteArtist");
-        return this.deleteArtist(parseInt(args[0]));
+        return this.deleteArtist(args[0]);
       case "deleteAlbum":
         this.checkParametersLength(args, 1, "deleteAlbum");
-        return this.deleteAlbum(parseInt(args[0]));
+        return this.deleteAlbum(args[0]);
       case "deleteTrack":
         this.checkParametersLength(args, 1, "deleteTrack");
-        return this.deleteTrack(parseInt(args[0]));
+        return this.deleteTrack(args[0]);
+      case "deletePlaylist":
+        this.checkParametersLength(args, 1, "deletePlaylist");
+        return this.deletePlaylist(args[0]);
       case "getTracksFromArtist":
         this.checkParametersLength(args, 1, "getTracksFromArtist");
         return this.getTracksMatchingArtist(args[0]);
@@ -134,20 +140,16 @@ export default class UNQfy {
         return this.createPlaylist(params.name, params.genres, params.duration);
       case "listPlaylist":
         this.checkParametersLength(args, 1, "listPlaylist");
-        this.listPlaylist(parseInt(args[0]))
-        break;
+        return this.listPlaylist(parseInt(args[0]))
       case "listArtist":
         this.checkParametersLength(args, 1, "listArtist");
-        this.listArtist(parseInt(args[0]))
-        break;
+        return this.listArtist(parseInt(args[0]))
       case "listAlbum":
         this.checkParametersLength(args, 1, "listAlbum");
-        this.listAlbum(parseInt(args[0]))
-        break;
+        return this.listAlbum(parseInt(args[0]))
       case "listTrack":
         this.checkParametersLength(args, 1, "listTrack");
-        this.listTrack(parseInt(args[0]))
-        break;
+        return this.listTrack(parseInt(args[0]))
       default:
         throw new InvalidCommandError(command);
     }
@@ -174,7 +176,7 @@ export default class UNQfy {
   }
 
   private artistDoesNotExist(artistData: any): boolean{
-    return this.artists.find(artist => artist.name === artistData.name && artist.country === artistData.country) == null
+    return !this.artists.some(artist => artist.name === artistData.name && artist.country === artistData.country)
   }
 
   // albumData: objeto JS con los datos necesarios para crear un album
@@ -198,86 +200,80 @@ export default class UNQfy {
     return album.addTrack(trackData, this)
   }
 
-  private getArtist(arg: string): Artist{
-    let foundedArtist = null;
-    try {
-      foundedArtist = this.getArtistById(parseInt(arg));
-    } catch(e){
-      if (e.constructor.name === 'ElementNotFoundError'){
-        foundedArtist = this.getArtistByName(arg);
-      } else {
-        throw e;
+  private genericSearch(elementId: any, elementsArray: Array<any>, description: string) {
+    let searchInt = elementId
+    parseInt(searchInt)
+    let foundElement= elementsArray.find( element => element.id == searchInt);
+    if (foundElement != null){
+        return foundElement;
+    } else {
+      foundElement = elementsArray.filter( element => element.name == elementId)
+      switch (foundElement.length){
+        case 1:
+          return foundElement[0]
+        case 0:
+          throw new ElementNotFoundError('Element with id ' + elementId.toString() + ' could not be found while searching for ' + description);
+        default:
+          throw new ElementNotFoundError('More than one match while searching a ' + description + ' for the id ' + elementId.toString());
       }
     }
-    return foundedArtist;
   }
 
-  private genericSearch(elementId: any, searchParam: string, elementsArray: Array<any>, description: string) {
-    const foundedElements: any = elementsArray.filter( element => element[searchParam] === elementId);
-    if (foundedElements.length === 1)
-      return foundedElements[0];
-    else if (foundedElements.length > 1)
-      throw new ElementNotFoundError('More than one match while searching a ' + description + ' for the id ' + elementId);
-    else 
-      throw new ElementNotFoundError('Element with id ' + elementId + ' could not be found while searching for ' + description);
+  getArtistById(id : any): Artist {
+    return this.genericSearch(id, this.artists, "artist");
   }
 
-  getArtistById(id : number): Artist {
-    return this.genericSearch(id, "id", this.artists, "artist");
+  getAlbumById(id : any): Album {
+    return this.genericSearch(id, this.allAlbums(), "album");
   }
 
-  getArtistByName(name : string): Artist {
-    return this.genericSearch(name, "name", this.artists, "artist");
+  getTrackById(id : any): Track{
+    return this.genericSearch(id, this.allTracks(), "track");
   }
 
-  getAlbumById(id : number): Album {
-    return this.genericSearch(id, "id", this.allAlbums(), "album");
+  getPlaylistById(id : any): Playlist {
+    return this.genericSearch(id, this.playlists, "playlist");
   }
 
-  getAlbumByName(name : string): Album {
-    return this.genericSearch(name, "name", this.allAlbums(), "album");
-  }
-
-  getTrackById(id : number): Track{
-    return this.genericSearch(id, "id", this.allTracks(), "track");
-  }
-
-  getTrackByName(name : string): Track{
-    return this.genericSearch(name, "name", this.allTracks(), "track");
-  }
-
-  getPlaylistById(id : number): Playlist {
-    return this.genericSearch(id, "id", this.playlists, "playlist");
-  }
-
-  getPlaylistByName(name : string): Playlist {
-    return this.genericSearch(name, "name", this.playlists, "playlist");
-  }
-
-  deleteArtist(artistId: number) {
+  deleteArtist(artistId: any) {
     const artistToDelete = this.getArtistById(artistId);
     const artistAlbums = artistToDelete.getAlbums();
     artistAlbums.forEach( album => this.deleteAlbum(album.id) );
-    this.artists = this.artists.filter( artist => artist.id !== artistId);
+    this.artists = this.artists.filter( artist => artist.id !== artistToDelete.id);
+    return {deleted: artistToDelete}
   }
   
-  deleteAlbum(albumId: number) {
+  deleteAlbum(albumId: any) {
     const albumToDelete = this.getAlbumById(albumId);
     const albumTracks = albumToDelete.getTracks();
     albumTracks.forEach( track => this.deleteTrack(track.id) )
-
     this.artists.forEach( artist => artist.deleteAlbum(albumToDelete))
+    return {deleted: albumToDelete}
   }
 
-  deleteTrack(trackId: number) {
+  deleteTrack(trackId: any) {
     const trackToDelete = this.getTrackById(trackId);
     this.allAlbums().forEach( album => album.deleteTrack(trackToDelete));
     this.deleteTrackFromPlaylists(trackId);
+    this.deleteTrackFromUsers(trackToDelete)
+    return {deleted: trackToDelete}
+  }
+
+  deletePlaylist(playlistId: any){
+    const playlistToDelete = this.getPlaylistById(playlistId);
+    this.playlists = this.playlists.filter( playlist => playlist.id !== playlistToDelete.id);
+    return {deleted: playlistToDelete}
   }
 
   deleteTrackFromPlaylists(trackId: number){
     this.playlists.forEach(playlist =>
       playlist.deleteTrack(trackId)
+    );
+  }
+
+  deleteTrackFromUsers(track: Track){
+    this.users.forEach(user =>
+      user.deleteTrack(track)
     );
   }
 
@@ -290,7 +286,7 @@ export default class UNQfy {
   // artistName: nombre de artista(string)
   // retorna: los tracks interpredatos por el artista con nombre artistName
   getTracksMatchingArtist(artistName : string): Array<Track> {
-    return this.getArtist(artistName).getAllTracks();
+    return this.getArtistById(artistName).getAllTracks();
   }
 
   searchByName(keyword: string){
@@ -315,58 +311,60 @@ export default class UNQfy {
   }
 
   listPlaylist(searchParam: any) {
-    let element: Playlist = null;
+    let element: Playlist;
     element = this.getPlaylistById(searchParam);
-
-    console.log("Playlist (id: " + element.id + "):");
-    console.log("---------");
-    console.log("nombre: " + element.name);
-    console.log("duración: " + element.duration() + " segundos");
-    console.log("generos: " + element.genres.reduce( (acum: string, g: string) => acum + " " + g, "") );
-    console.log("canciones: ");
+    let songs = [];
     for (let track of element.getTracks()) {
-      console.log(`  nombre: ${track.name}, duración: ${track.duration}, generos: ${track.genres.reduce( (acum, g) => " " + g, "")} `);
+      songs.push({name: track.name, duration: track.duration, genres: track.genres.reduce( (acum, g) => " " + g, "")});
+    }
+    return {
+      playlistId: element.id,
+      name: element.name,
+      length: element.duration(),
+      genres: element.genres.reduce( (acum: string, g: string) => acum + " " + g, ""),
+      songs
     }
   }
 
-  listArtist(searchParam: number) {
-    let element: Artist = null;
+  listArtist(searchParam: any) {
+    let element: Artist;
     element = this.getArtistById(searchParam);
-
-    console.log("Artista (id: " + element.id + "):");
-    console.log("---------");
-    console.log("nombre: " + element.name);
-    console.log("país: " + element.country);
-    console.log("albums: ");
+    let albums = [];
     for (let album of element.getAlbums()) {
-      console.log(`  nombre: ${album.name}, año: ${album.year}`);
+      albums.push({name: album.name, year: album.year});
+    }
+    return {
+      artistId: element.id,
+      name: element.name,
+      country: element.country,
+      albums
     }
   }
 
-  listAlbum(searchParam: number) {
-    let element: Album = null;
+  listAlbum(searchParam: any) {
+    let element: Album;
     element = this.getAlbumById(searchParam);
-
-    console.log("Album (id: " + element.id + "):");
-    console.log("---------");
-    console.log("nombre: " + element.name);
-    console.log("año: " + element.year);
-    console.log("canciones: ");
+    let tracks = [];
     for (let track of element.getTracks()) {
-      console.log(`  nombre: ${track.name}, duración: ${track.duration}, generos: ${track.genres.reduce( (acum, g) => " " + g, "")} `);
+      tracks.push({name: track.name, duration: track.duration, genres: track.genres.reduce( (acum, g) => " " + g, "")});
+    }
+    return {
+      albumId: element.id,
+      name: element.name,
+      year: element.year,
+      tracks
     }
   }
 
-  listTrack(searchParam: number) {
-    let element: Track = null;
+  listTrack(searchParam: any) {
+    let element: Track;
     element = this.getTrackById(searchParam);
-
-    console.log("Canción (id: " + element.id + "):");
-    console.log("---------");
-    console.log("nombre: " + element.name);
-    console.log("duración: " + element.duration);
-    console.log("canciones: ");
-    console.log("generos: " + element.genres.reduce( (acum: string, g: string) => acum + " " + g, "") );
+    return {
+      trackId: element.id,
+      name: element.name,
+      duration: element.duration,
+      genres: element.genres.reduce( (acum: string, g: string) => acum + " " + g, "")
+    }
   }
 
   createUser(name: string): User{
@@ -380,67 +378,45 @@ export default class UNQfy {
   }
 
   private userDoesNotExist(name: string): boolean{
-    return this.users.find(user => user.name === name) == null
+    return !this.users.some(user => user.name === name)
   }
 
-  getUser(arg: string): User{
-    let foundUser = null;
-    try {
-      foundUser = this.getUserById(parseInt(arg));
-    } catch(e){
-      if (e.constructor.name === 'ElementNotFoundError'){
-        foundUser = this.getUserByName(arg);
-      } else {
-        throw e;
-      }
-    }
-    return foundUser;
+  deleteUser(userId: any){
+    const userToDelete = this.getUserById(userId);
+    this.users = this.users.filter( user => user.id !== userToDelete.id);
+    return {deleted: userToDelete}
   }
 
-  getUserById(id : number): User {
-    return this.genericSearch(id, "id", this.users, "user");
-  }
-
-  getUserByName(name : string): User {
-    return this.genericSearch(name, "name", this.users, "user");
+  getUserById(id : any): User {
+    return this.genericSearch(id, this.users, "user");
   }
   
   userListenTo(userId: string, trackId: string): HistoryEvent{
-    var track: Track;
-    try{
-      track = this.getTrackById(parseInt(trackId));
-    } catch(e){
-      track = this.getTrackByName(trackId);
-    }
-    var user = this.getUser(userId);
+    let track: Track = this.getTrackById(trackId);
+    let user = this.getUserById(userId);
     return user.listenTo(track);
   }
 
   getTracksListenedBy(userId: string): Array<Track>{
-    const user = this.getUser(userId);
+    const user = this.getUserById(userId);
     return user.getAllTracksListenedTo();
   }
 
   getTimesTrackListenedBy(userId: string, trackId: string): number{
-    var track: Track;
-    try{
-      track = this.getTrackById(parseInt(trackId));
-    } catch(e){
-      track = this.getTrackByName(trackId);
-    }
-    var user = this.getUser(userId);
+    let track: Track = this.getTrackById(trackId);
+    let user = this.getUserById(userId);
     return user.getTimesTrackListened(track);
   }
 
   getArtistMostListenedTracks(artistId: string): Array<Track>{
-    const tracks = this.getArtist(artistId).getAllTracks();
+    const tracks = this.getArtistById(artistId).getAllTracks();
     tracks.sort((a: Track, b: Track)=>this.compareListenersForTracks(a, b));
     return tracks.slice(0, 2);
   }
 
   compareListenersForTracks(track1: Track, track2: Track){
-    var times1 = this.timesListenedFor(track1);
-    var times2 = this.timesListenedFor(track2)
+    let times1 = this.timesListenedFor(track1);
+    let times2 = this.timesListenedFor(track2)
     if ( times1 < times2 ){
       return -1;
     } else if (times1 > times2){
@@ -451,7 +427,7 @@ export default class UNQfy {
   }
 
   timesListenedFor(track: Track): number{
-    var times = 0;
+    let times = 0;
     this.users.forEach(user => times += user.getTimesTrackListened(track))
     return times;
   }

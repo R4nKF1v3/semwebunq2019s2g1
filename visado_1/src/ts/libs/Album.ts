@@ -27,7 +27,7 @@ export default class Album{
   }
 
   private trackDoesNotExist(trackData: any): boolean{
-    return this.tracks.find(track => track.name === trackData.name && track.duration === trackData.duration && track.hasSameGenres(trackData.genres)) == null    
+    return !this.tracks.some(track => track.name === trackData.name && track.duration === trackData.duration && track.hasSameGenres(trackData.genres)) 
   }
 
   deleteTrack(trackToDelete: Track) {

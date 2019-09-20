@@ -32,5 +32,8 @@ class User {
         });
         return times;
     }
+    deleteTrack(track) {
+        this.history = this.history.filter(event => event.track.id != track.id);
+    }
 }
 exports.default = User;

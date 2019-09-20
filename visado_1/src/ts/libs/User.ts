@@ -4,7 +4,7 @@ import Track from './Track';
 export default class User{
   readonly id: number;
   readonly name: string;
-  readonly history: Array<HistoryEvent>;
+  private history: Array<HistoryEvent>;
 
   constructor(id: number, name: string) {
     this.id = id;
@@ -38,5 +38,9 @@ export default class User{
       }
     })
     return times;
+  }
+
+  deleteTrack(track: Track){
+    this.history = this.history.filter(event => event.track.id != track.id);
   }
 }

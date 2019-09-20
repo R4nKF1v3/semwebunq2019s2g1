@@ -20,7 +20,7 @@ class Album {
         }
     }
     trackDoesNotExist(trackData) {
-        return this.tracks.find(track => track.name === trackData.name && track.duration === trackData.duration && track.hasSameGenres(trackData.genres)) == null;
+        return !this.tracks.some(track => track.name === trackData.name && track.duration === trackData.duration && track.hasSameGenres(trackData.genres));
     }
     deleteTrack(trackToDelete) {
         this.tracks = this.tracks.filter(track => track.id !== trackToDelete.id);

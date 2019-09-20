@@ -8,7 +8,7 @@ class Track {
         this.genres = genres;
     }
     containsGenre(genres) {
-        return genres.find(genre => this.genres.includes(genre)) != null;
+        return genres.some(genre => this.genres.includes(genre));
     }
     hasSameGenres(genres) {
         const res = this.genres.filter(genre => genres.includes(genre));

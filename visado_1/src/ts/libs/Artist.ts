@@ -26,7 +26,7 @@ export default class Artist {
   }
 
   private albumDoesNotExist(albumData: any): boolean{
-    return this.albums.find(album => album.name === albumData.name && album.year === albumData.year) == null
+    return !this.albums.some(album => album.name === albumData.name && album.year === albumData.year)
   }
 
   getAlbums() {
