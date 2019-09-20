@@ -19,6 +19,7 @@ export default class Playlist{
     this.tracks = [];
     let totalDuration: number = 0;
 
+    // TODO: Considerar caso de tracks con duraciones que entran posteriores a tracks con duraciones mayores al máximo
     for (let currentTrack of unqfy.getTracksMatchingGenres(this.genres)) {
       if (this.maxDuration < (totalDuration + currentTrack.duration)) 
         break;
@@ -26,8 +27,8 @@ export default class Playlist{
     }
   }
 
-  deleteTrack(id: number){
-    this.tracks = this.tracks.filter( track => track.id !== id );
+  deleteTrack(trackToDelete: Track){
+    this.tracks = this.tracks.filter( track => track.id !== trackToDelete.id );
   }
 
   duration(): number {

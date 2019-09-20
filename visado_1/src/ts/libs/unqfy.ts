@@ -254,7 +254,7 @@ export default class UNQfy {
   deleteTrack(trackId: any) {
     const trackToDelete = this.getTrackById(trackId);
     this.allAlbums().forEach( album => album.deleteTrack(trackToDelete));
-    this.deleteTrackFromPlaylists(trackId);
+    this.deleteTrackFromPlaylists(trackToDelete);
     this.deleteTrackFromUsers(trackToDelete)
     return {deleted: trackToDelete}
   }
@@ -265,9 +265,9 @@ export default class UNQfy {
     return {deleted: playlistToDelete}
   }
 
-  deleteTrackFromPlaylists(trackId: number){
+  deleteTrackFromPlaylists(track: Track){
     this.playlists.forEach(playlist =>
-      playlist.deleteTrack(trackId)
+      playlist.deleteTrack(track)
     );
   }
 
