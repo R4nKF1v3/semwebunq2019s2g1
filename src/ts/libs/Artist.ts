@@ -86,10 +86,19 @@ export default class Artist {
 
   populateAlbums(){
     //Buscar id del track en Spotify
-      //Hacer el request del JSON con el id pidiendo 
-        //Operar sobre la respuesta tomando solo los datos necesarios para crear los albums (Name y ReleaseDate, del cual solo tomamos el año)
-    //return "todo ok"
-    //if error return "todo mal"
+      "sarasa"
+    //Hacer el procedimiento de conseguir el token y usarlo reemplazando el ACCESS_TOKEN
+    //Una vez con el id hacer el request del JSON
+    const rp = require('request-promise');
+    const options = {
+      url: 'https://api.spotify.com/v1/artists/{id}/albums',
+      headers: { Authorization: 'Bearer ' + 'ACCESS_TOKEN' },
+      json: true,
+    };
+    rp.get(options).then((response: any) => {
+      /*hacer algo con response*/
+      //Operar sobre la respuesta tomando solo los datos necesarios para crear los albums (Name y ReleaseDate, del cual solo tomamos el año)
+    });
   }
 
 }
