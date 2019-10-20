@@ -112,6 +112,15 @@ function executeWith(unqfy, command, args) {
         case "listTrack":
             checkParametersLength(args, 1, "listTrack");
             return unqfy.listTrack(parseInt(args[0]));
+        case "getAlbumsForArtist":
+            checkParametersLength(args, 1, "getAlbumsForArtist");
+            return unqfy.getAlbumsForArtist(args[0]);
+        case "populateAlbumsForArtist":
+            checkParametersLength(args, 1, "populateAlbumsForArtist");
+            return unqfy.populateAlbumsForArtist(args[0]);
+        case "getLyricsForTrack":
+            checkParametersLength(args, 1, "getLyricsForTrack");
+            return unqfy.getLyricsFor(args[0]);
         default:
             throw new InvalidCommandError_1.default(command);
     }

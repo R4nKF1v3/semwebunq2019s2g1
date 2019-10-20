@@ -269,6 +269,19 @@ class UNQfy {
         const artist = this.getArtistById(artistId);
         return artist.getMostListened(this.users);
     }
+    //Correspondientes a Visado 2
+    getAlbumsForArtist(artistName) {
+        const artist = this.getArtistById(artistName);
+        return artist.getAlbumsNames();
+    }
+    populateAlbumsForArtist(artistName) {
+        const artist = this.getArtistById(artistName);
+        return artist.populateAlbums();
+    }
+    getLyricsFor(trackId) {
+        const track = this.getTrackById(trackId);
+        return track.getLyrics();
+    }
     save(filename) {
         const serializedData = picklify.picklify(this);
         fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));

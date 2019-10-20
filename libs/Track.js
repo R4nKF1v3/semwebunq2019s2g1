@@ -14,5 +14,13 @@ class Track {
         const res = this.genres.filter(genre => genres.includes(genre));
         return res.length === this.genres.length && res.length === genres.length;
     }
+    getLyrics() {
+        if (this.lyrics) {
+            return this.lyrics;
+        }
+        //Buscar id del track en MusixMatch
+        //Hacer el request del JSON con el id
+        //Operar sobre la respuesta y guardar y devolver el "lyrics_body" del response.body.lyrics en this.lyrics
+    }
 }
 exports.default = Track;

@@ -25,6 +25,14 @@ class Artist {
     getAlbums() {
         return this.albums;
     }
+    getAlbumsNames() {
+        let albums = [];
+        for (let album of this.albums) {
+            albums.push({ name: album.name });
+        }
+        ;
+        return albums;
+    }
     deleteAlbum(albumToDelete) {
         this.albums = this.albums.filter(album => album.id !== albumToDelete.id);
     }
@@ -63,6 +71,22 @@ class Artist {
         let times = 0;
         users.forEach(user => times += user.getTimesTrackListened(track));
         return times;
+    }
+    populateAlbums() {
+        //Buscar id del track en Spotify
+        "sarasa";
+        //Hacer el procedimiento de conseguir el token y usarlo reemplazando el ACCESS_TOKEN
+        //Una vez con el id hacer el request del JSON
+        const rp = require('request-promise');
+        const options = {
+            url: 'https://api.spotify.com/v1/artists/{id}/albums',
+            headers: { Authorization: 'Bearer ' + 'ACCESS_TOKEN' },
+            json: true,
+        };
+        rp.get(options).then((response) => {
+            /*hacer algo con response*/
+            //Operar sobre la respuesta tomando solo los datos necesarios para crear los albums (Name y ReleaseDate, del cual solo tomamos el año)
+        });
     }
 }
 exports.default = Artist;
