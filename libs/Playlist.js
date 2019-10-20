@@ -11,14 +11,15 @@ class Playlist {
     fillPlaylist(unqfy) {
         this.tracks = [];
         let totalDuration = 0;
+        // TODO: Considerar caso de tracks con duraciones que entran posteriores a tracks con duraciones mayores al máximo
         for (let currentTrack of unqfy.getTracksMatchingGenres(this.genres)) {
             if (this.maxDuration < (totalDuration + currentTrack.duration))
                 break;
             this.tracks.push(currentTrack);
         }
     }
-    deleteTrack(id) {
-        this.tracks = this.tracks.filter(track => track.id !== id);
+    deleteTrack(trackToDelete) {
+        this.tracks = this.tracks.filter(track => track.id !== trackToDelete.id);
     }
     duration() {
         return this.tracks.reduce((acum, track) => acum + track.duration, 0);

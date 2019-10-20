@@ -7,8 +7,6 @@ const Album_1 = require("./Album");
 const Track_1 = require("./Track");
 const Playlist_1 = require("./Playlist");
 const User_1 = require("./User");
-const InvalidCommandError_1 = require("./exceptions/InvalidCommandError");
-const InsufficientParametersError_1 = require("./exceptions/InsufficientParametersError");
 const ElementAlreadyExistsError_1 = require("./exceptions/ElementAlreadyExistsError");
 const ElementNotFoundError_1 = require("./exceptions/ElementNotFoundError");
 const HistoryEvent_1 = require("./HistoryEvent");
@@ -50,97 +48,6 @@ class UNQfy {
     getNewUserId() {
         this.idCounter.userId++;
         return this.idCounter.userId;
-    }
-    //Switch que ejecuta los comandos dependiendo del término
-    executeWith(command, args) {
-        switch (command) {
-            case "createUser":
-                this.checkParametersLength(args, 1, "createUser");
-                return this.createUser(args[0]);
-            case "getUser":
-                this.checkParametersLength(args, 1, "getUser");
-                return this.getUserById(args[0]);
-            case "deleteUser":
-                this.checkParametersLength(args, 1, "deleteUser");
-                return this.deleteUser(args[0]);
-            case "userListenTo":
-                this.checkParametersLength(args, 2, "userListenTo");
-                return this.userListenTo(args[0], args[1]);
-            case "userTrackHistory":
-                this.checkParametersLength(args, 1, "userTrackHistory");
-                return this.getTracksListenedBy(args[0]);
-            case "userTimesListenedTo":
-                this.checkParametersLength(args, 2, "userTimesListenedTo");
-                return this.getTimesTrackListenedBy(args[0], args[1]);
-            case "getArtistMostListened":
-                this.checkParametersLength(args, 1, "getArtistMostListened");
-                return this.getArtistMostListenedTracks(args[0]);
-            case "addArtist":
-                this.checkParametersLength(args, 2, "addArtist");
-                return this.addArtist({ name: args[0], country: args[1] });
-            case "addAlbum":
-                this.checkParametersLength(args, 3, "addAlbum");
-                return this.addAlbum(parseInt(args[0]), { name: args[1], year: args[2] });
-            case "addTrack":
-                this.checkParametersLength(args, 4, "addTrack");
-                return this.addTrack(parseInt(args[0]), { name: args[1], duration: args[2], genres: args.slice(3, args.length) });
-            case "getArtist":
-                this.checkParametersLength(args, 1, "getArtist");
-                return this.getArtistById(args[0]);
-            case "getAlbum":
-                this.checkParametersLength(args, 1, "getAlbum");
-                return this.getAlbumById(args[0]);
-            case "getTrack":
-                this.checkParametersLength(args, 1, "getTrack");
-                return this.getTrackById(args[0]);
-            case "getPlaylist":
-                this.checkParametersLength(args, 1, "getPlaylist");
-                return this.getPlaylistById(args[0]);
-            case "deleteArtist":
-                this.checkParametersLength(args, 1, "deleteArtist");
-                return this.deleteArtist(args[0]);
-            case "deleteAlbum":
-                this.checkParametersLength(args, 1, "deleteAlbum");
-                return this.deleteAlbum(args[0]);
-            case "deleteTrack":
-                this.checkParametersLength(args, 1, "deleteTrack");
-                return this.deleteTrack(args[0]);
-            case "deletePlaylist":
-                this.checkParametersLength(args, 1, "deletePlaylist");
-                return this.deletePlaylist(args[0]);
-            case "getTracksFromArtist":
-                this.checkParametersLength(args, 1, "getTracksFromArtist");
-                return this.getTracksMatchingArtist(args[0]);
-            case "getTracksMatchingGenres":
-                this.checkParametersLength(args, 1, "getTracksMatchingGenres");
-                return this.getTracksMatchingGenres(args.slice(0, args.length));
-            case "searchByName":
-                this.checkParametersLength(args, 1, "searchByName");
-                return this.searchByName(args[0]);
-            case "addPlaylist":
-                this.checkParametersLength(args, 3, "addPlaylist");
-                const params = { name: args[0], duration: parseInt(args[1]), genres: args.slice(2, args.length) };
-                return this.createPlaylist(params.name, params.genres, params.duration);
-            case "listPlaylist":
-                this.checkParametersLength(args, 1, "listPlaylist");
-                return this.listPlaylist(parseInt(args[0]));
-            case "listArtist":
-                this.checkParametersLength(args, 1, "listArtist");
-                return this.listArtist(parseInt(args[0]));
-            case "listAlbum":
-                this.checkParametersLength(args, 1, "listAlbum");
-                return this.listAlbum(parseInt(args[0]));
-            case "listTrack":
-                this.checkParametersLength(args, 1, "listTrack");
-                return this.listTrack(parseInt(args[0]));
-            default:
-                throw new InvalidCommandError_1.default(command);
-        }
-    }
-    checkParametersLength(parameters, length, caseType) {
-        if (parameters.length < length) {
-            throw new InsufficientParametersError_1.default(caseType);
-        }
     }
     // artistData: objeto JS con los datos necesarios para crear un artista
     //   artistData.name (string)
@@ -226,7 +133,7 @@ class UNQfy {
     deleteTrack(trackId) {
         const trackToDelete = this.getTrackById(trackId);
         this.allAlbums().forEach(album => album.deleteTrack(trackToDelete));
-        this.deleteTrackFromPlaylists(trackId);
+        this.deleteTrackFromPlaylists(trackToDelete);
         this.deleteTrackFromUsers(trackToDelete);
         return { deleted: trackToDelete };
     }
@@ -235,8 +142,8 @@ class UNQfy {
         this.playlists = this.playlists.filter(playlist => playlist.id !== playlistToDelete.id);
         return { deleted: playlistToDelete };
     }
-    deleteTrackFromPlaylists(trackId) {
-        this.playlists.forEach(playlist => playlist.deleteTrack(trackId));
+    deleteTrackFromPlaylists(track) {
+        this.playlists.forEach(playlist => playlist.deleteTrack(track));
     }
     deleteTrackFromUsers(track) {
         this.users.forEach(user => user.deleteTrack(track));
