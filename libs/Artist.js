@@ -41,5 +41,28 @@ class Artist {
         });
         return allTracks;
     }
+    getMostListened(users) {
+        const tracks = this.getAllTracks();
+        tracks.sort((a, b) => this.compareListenersForTracks(a, b, users));
+        return tracks.slice(0, 2);
+    }
+    compareListenersForTracks(track1, track2, users) {
+        let times1 = this.timesListenedFor(track1, users);
+        let times2 = this.timesListenedFor(track2, users);
+        if (times1 < times2) {
+            return -1;
+        }
+        else if (times1 > times2) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+    timesListenedFor(track, users) {
+        let times = 0;
+        users.forEach(user => times += user.getTimesTrackListened(track));
+        return times;
+    }
 }
 exports.default = Artist;

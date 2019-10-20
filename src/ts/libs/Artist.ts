@@ -1,6 +1,7 @@
 import Album from "./Album";
 import Track from "./Track";
 import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
+import User from "./User";
 
 export default class Artist {
   readonly id: number;
@@ -49,6 +50,30 @@ export default class Artist {
       allTracks = allTracks.concat(tracks);
     })
     return allTracks;
+  }
+
+  getMostListened(users: Array<User>): Array<Track>{
+    const tracks = this.getAllTracks();
+    tracks.sort((a: Track, b: Track)=>this.compareListenersForTracks(a, b, users));
+    return tracks.slice(0, 2);
+  }
+
+  compareListenersForTracks(track1: Track, track2: Track, users: Array<User>){
+    let times1 = this.timesListenedFor(track1, users);
+    let times2 = this.timesListenedFor(track2, users);
+    if ( times1 < times2 ){
+      return -1;
+    } else if (times1 > times2){
+      return 1;
+    } else{
+      return 0;
+    }
+  }
+
+  timesListenedFor(track: Track, users: Array<User>): number{
+    let times = 0;
+    users.forEach(user => times += user.getTimesTrackListened(track))
+    return times;
   }
 
 }

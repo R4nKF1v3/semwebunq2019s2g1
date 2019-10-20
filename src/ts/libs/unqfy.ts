@@ -314,27 +314,8 @@ export default class UNQfy {
   }
 
   getArtistMostListenedTracks(artistId: string): Array<Track>{
-    const tracks = this.getArtistById(artistId).getAllTracks();
-    tracks.sort((a: Track, b: Track)=>this.compareListenersForTracks(a, b));
-    return tracks.slice(0, 2);
-  }
-
-  compareListenersForTracks(track1: Track, track2: Track){
-    let times1 = this.timesListenedFor(track1);
-    let times2 = this.timesListenedFor(track2)
-    if ( times1 < times2 ){
-      return -1;
-    } else if (times1 > times2){
-      return 1;
-    } else{
-      return 0;
-    }
-  }
-
-  timesListenedFor(track: Track): number{
-    let times = 0;
-    this.users.forEach(user => times += user.getTimesTrackListened(track))
-    return times;
+    const artist = this.getArtistById(artistId);
+    return artist.getMostListened(this.users);
   }
 
   save(filename : string) {
