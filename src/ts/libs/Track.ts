@@ -5,6 +5,7 @@ export default class Track{
   readonly name: string;
   readonly duration: number;
   readonly genres: Array<string>;
+  private lyrics: string;
 
   constructor(id: number, name: string, duration: number, genres: Array<string>, album: Album) {
     this.id = id;
@@ -20,6 +21,15 @@ export default class Track{
   hasSameGenres(genres: Array<string>): boolean{
     const res = this.genres.filter(genre => genres.includes(genre));
     return res.length === this.genres.length && res.length === genres.length;
+  }
+
+  getLyrics(): string{
+    if (this.lyrics){
+      return this.lyrics;
+    }
+    //Buscar id del track en MusixMatch
+      //Hacer el request del JSON con el id
+        //Operar sobre la respuesta y guardar y devolver el "lyrics_body" del response.body.lyrics en this.lyrics
   }
 
 }

@@ -30,8 +30,16 @@ export default class Artist {
     return !this.albums.some(album => album.name === albumData.name && album.year === albumData.year)
   }
 
-  getAlbums() {
+  getAlbums(): Array<Album> {
     return this.albums;
+  }
+
+  getAlbumsNames(): Array<any>{
+    let albums = [];
+    for (let album of this.albums) {
+      albums.push({name: album.name});
+    };
+    return albums;
   }
 
   deleteAlbum(albumToDelete: Album) {
@@ -74,6 +82,14 @@ export default class Artist {
     let times = 0;
     users.forEach(user => times += user.getTimesTrackListened(track))
     return times;
+  }
+
+  populateAlbums(){
+    //Buscar id del track en Spotify
+      //Hacer el request del JSON con el id pidiendo 
+        //Operar sobre la respuesta tomando solo los datos necesarios para crear los albums (Name y ReleaseDate, del cual solo tomamos el año)
+    //return "todo ok"
+    //if error return "todo mal"
   }
 
 }

@@ -318,6 +318,22 @@ export default class UNQfy {
     return artist.getMostListened(this.users);
   }
 
+  //Correspondientes a Visado 2
+  getAlbumsForArtist(artistName: string){
+    const artist = this.getArtistById(artistName);
+    return artist.getAlbumsNames();
+  }
+
+  populateAlbumsForArtist(artistName: string){
+    const artist = this.getArtistById(artistName);
+    return artist.populateAlbums();
+  }
+
+  getLyricsFor(trackId: string): string{
+    const track = this.getTrackById(trackId);
+    return track.getLyrics()
+  }
+
   save(filename : string) {
     const serializedData = picklify.picklify(this);
     fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));
