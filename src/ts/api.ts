@@ -1,127 +1,39 @@
-import ElementAreadyExistsError from './libs/exceptions/ElementAlreadyExistsError';
-import ElementNotFoundError from './libs/exceptions/ElementNotFoundError';
 import APIError from './api_modules/exceptions/APIError';
 import ResourceNotFound from './api_modules/exceptions/ResourceNotFound';
-import RelatedResourceNotFound from './api_modules/exceptions/RelatedResourceNotFound';
-import BadRequest from './api_modules/exceptions/BadRequest';
-import ResourceAlreadyExists from './api_modules/exceptions/ResourceAlreadyExists';
-import InternalServerError from './api_modules/exceptions/InternalServerError';
-
-import fs from 'fs'; // necesitado para guardar/cargar unqfy
-const unqmod = require('./libs/unqfy');
-
-function getUNQfy(filename = './data.json') : UNQfy {
-    let unqfy = new unqmod.UNQfy();
-    if (fs.existsSync(filename)) {
-        unqfy = unqmod.UNQfy.load(filename);
-    }
-    return unqfy;
-};
-
-function saveUNQfy(unqfy, filename = './data.json') {
-    unqfy.save(filename);
-};
+import ArtistController from './api_modules/controllers/ArtistController';
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import UNQfy from './libs/unqfy';
 
 let port = process.env.PORT || 8080;
 
 const rootApp = express();
+
 
 // Routing module for /artists
 const artists = express();
 artists.use(bodyParser.urlencoded({ extended: true }));
 artists.use(bodyParser.json());
 
+const artistController = new ArtistController;
+
 artists.route( '/artists')
     .get((req, res) => {
-        try {
-            if (req.query.name){
-                const unqfy: UNQfy = getUNQfy();
-                const results = unqfy.searchArtistsByName(req.query.name);
-                res.json(results);
-                res.status(200);
-            } else {
-                const unqfy: UNQfy = getUNQfy();
-                const results = unqfy.getAllArtists();
-                res.json(results);
-                res.status(200);
-            }
-        } catch(e) {
-            throw new InternalServerError;
-        }
+        artistController.handleGetArtists(req, res);
     })
     .post((req, res) => {
-        if (req.body.name && req.body.country){
-            try {
-                const unqfy : UNQfy = getUNQfy();
-                const artist = unqfy.addArtist({name: req.body.name, country: req.body.country});
-                saveUNQfy(unqfy);
-                res.json(artist.toJSON());
-                res.status(201);
-            } catch(e){
-                if (e instanceof ElementAreadyExistsError){
-                    throw new ResourceAlreadyExists;
-                } else {
-                    throw new InternalServerError;
-                }
-            }
-        } else {
-            throw new BadRequest;
-        }    
+        artistController.handleNewArtist(req, res);  
     });
 
 artists.route('/artists/:artistId')
     .get((req, res) => {
-        try {
-            const unqfy : UNQfy = getUNQfy();
-            const artist = unqfy.getArtistById(req.params.artistId);
-            res.json(artist.toJSON());
-            res.status(200);
-        } catch(e) {
-            if (e instanceof ElementNotFoundError){
-                throw new ResourceNotFound;
-            } else {
-                throw new InternalServerError;
-            }
-        }
+        artistController.handleGetArtistId(req, res);
     })
     .patch((req, res) => {
-        if (req.body.name && req.body.country){
-            try {
-                const unqfy : UNQfy = getUNQfy();
-                const artist = unqfy.getArtistById(req.params.artistId);
-                artist.changeParameters(req.body.name, req.body.country);
-                saveUNQfy(unqfy);
-                res.json(artist.toJSON());
-                res.status(201);
-            } catch(e){
-                if (e instanceof ElementAreadyExistsError){
-                    throw new ResourceAlreadyExists;
-                } else if (e instanceof ElementNotFoundError){
-                    throw new ResourceNotFound;
-                } else {
-                    throw new InternalServerError;
-                }
-            }
-        } else {
-            throw new BadRequest;
-        }  
+        artistController.handleUpdateArtist(req, res);
     })
     .delete((req, res) => {
-        try {
-            const unqfy : UNQfy = getUNQfy();
-            unqfy.deleteArtist(req.params.artistId);
-            res.status(204);
-        } catch(e) {
-            if (e instanceof ElementNotFoundError){
-                throw new ResourceNotFound;
-            } else {
-                throw new InternalServerError;
-            }
-        }
+        artistController.handleDeleteArtist(req, res);
     });
 
 function artistErrorHandler(err, req, res, next) {
@@ -131,7 +43,7 @@ function artistErrorHandler(err, req, res, next) {
         res.json({status: err.status, errorCode: err.errorCode});
     } else if (err.type === 'entity.parse.failed'){
         res.status(err.status);
-        res.json({status: err.status, errorCode: 'INVALID_JSON'});
+        res.json({status: err.status, errorCode: 'BAD_REQUEST'});
     } else {
         next(err);
     }

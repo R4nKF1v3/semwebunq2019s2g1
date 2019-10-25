@@ -107,8 +107,8 @@ class Artist {
         return {
             id: this.id,
             name: this.name,
-            country: this.country,
             albums: albumList,
+            country: this.country,
         };
     }
 }
