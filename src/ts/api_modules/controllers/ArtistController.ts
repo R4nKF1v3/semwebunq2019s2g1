@@ -14,13 +14,13 @@ export default class ArtistController extends Controller{
             if (req.query.name){
                 const unqfy = this.getUNQfy();
                 const results = unqfy.searchArtistsByName(req.query.name);
-                res.json(results);
                 res.status(200);
+                res.json(results);
             } else {
                 const unqfy = this.getUNQfy();
                 const results = unqfy.getAllArtists();
-                res.json(results);
                 res.status(200);
+                res.json(results);
             }
         } catch(e) {
             console.log(e);
@@ -34,8 +34,8 @@ export default class ArtistController extends Controller{
                 const unqfy = this.getUNQfy();
                 const artist = unqfy.addArtist({name: req.body.name, country: req.body.country});
                 this.saveUNQfy(unqfy);
-                res.json(artist.toJSON());
                 res.status(201);
+                res.json(artist.toJSON());
             } catch(e){
                 console.log(e);
                 if (e instanceof ElementAreadyExistsError){
@@ -53,8 +53,8 @@ export default class ArtistController extends Controller{
         try {
             const unqfy = this.getUNQfy();
             const artist = unqfy.getArtistById(req.params.artistId);
-            res.json(artist.toJSON());
             res.status(200);
+            res.json(artist.toJSON());
         } catch(e) {
             console.log(e);
             if (e instanceof ElementNotFoundError){
@@ -72,8 +72,8 @@ export default class ArtistController extends Controller{
                 const artist = unqfy.getArtistById(req.params.artistId);
                 artist.changeParameters(req.body.name, req.body.country);
                 this.saveUNQfy(unqfy);
+                res.status(200);
                 res.json(artist.toJSON());
-                res.status(201);
             } catch(e){
                 console.log(e);
                 if (e instanceof ElementAreadyExistsError){
@@ -93,7 +93,9 @@ export default class ArtistController extends Controller{
         try {
             const unqfy : UNQfy = this.getUNQfy();
             unqfy.deleteArtist(req.params.artistId);
+            this.saveUNQfy(unqfy);
             res.status(204);
+            res.end();
         } catch(e) {
             console.log(e);
             if (e instanceof ElementNotFoundError){

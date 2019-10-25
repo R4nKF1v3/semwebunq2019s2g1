@@ -26,7 +26,7 @@ artists.route('/artists/:artistId')
     .get((req, res) => {
     artistController.handleGetArtistId(req, res);
 })
-    .patch((req, res) => {
+    .put((req, res) => {
     artistController.handleUpdateArtist(req, res);
 })
     .delete((req, res) => {
