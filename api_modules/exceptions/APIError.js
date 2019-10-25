@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class APIError extends Error {
     constructor(name, statusCode, errorCode, message = null) {
         super(message || name);
@@ -6,3 +8,4 @@ class APIError extends Error {
         this.errorCode = errorCode;
     }
 }
+exports.default = APIError;

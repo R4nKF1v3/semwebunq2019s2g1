@@ -25,6 +25,12 @@ class Artist {
     albumDoesNotExist(albumData) {
         return !this.albums.some(album => album.name === albumData.name && album.year === albumData.year);
     }
+    getName() {
+        return this.name;
+    }
+    getCountry() {
+        return this.country;
+    }
     getAlbums() {
         return this.albums;
     }
@@ -90,6 +96,10 @@ class Artist {
             /*hacer algo con response*/
             //Operar sobre la respuesta tomando solo los datos necesarios para crear los albums (Name y ReleaseDate, del cual solo tomamos el año)
         });
+    }
+    changeParameters(name, country) {
+        this.name = name;
+        this.country = country;
     }
     toJSON() {
         let albumList = [];

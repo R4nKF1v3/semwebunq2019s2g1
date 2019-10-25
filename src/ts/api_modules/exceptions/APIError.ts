@@ -1,4 +1,4 @@
-class APIError extends Error {
+export default class APIError extends Error {
     readonly status : number;
     readonly errorCode : string;
 

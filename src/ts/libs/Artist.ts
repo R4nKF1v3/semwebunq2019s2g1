@@ -5,8 +5,8 @@ import User from "./User";
 
 export default class Artist {
   readonly id: number;
-  readonly name : string;
-  readonly country : string;
+  private name : string;
+  private country : string;
   private albums: Array<Album>;
   
   constructor(id: number, name: string, country: string){
@@ -28,6 +28,14 @@ export default class Artist {
 
   private albumDoesNotExist(albumData: any): boolean{
     return !this.albums.some(album => album.name === albumData.name && album.year === albumData.year)
+  }
+
+  getName(): string{
+    return this.name;
+  }
+
+  getCountry(): string{
+    return this.country;
   }
 
   getAlbums(): Array<Album> {
@@ -99,6 +107,11 @@ export default class Artist {
       /*hacer algo con response*/
       //Operar sobre la respuesta tomando solo los datos necesarios para crear los albums (Name y ReleaseDate, del cual solo tomamos el año)
     });
+  }
+
+  changeParameters(name: string, country: string){
+    this.name = name;
+    this.country = country;
   }
 
   toJSON(){

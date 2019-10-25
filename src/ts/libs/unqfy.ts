@@ -81,7 +81,7 @@ export default class UNQfy {
   }
 
   private artistDoesNotExist(artistData: any): boolean{
-    return !this.artists.some(artist => artist.name === artistData.name && artist.country === artistData.country)
+    return !this.artists.some(artist => artist.getName() === artistData.name && artist.getCountry() === artistData.country)
   }
 
   // albumData: objeto JS con los datos necesarios para crear un album
@@ -196,7 +196,7 @@ export default class UNQfy {
 
   searchByName(keyword: string){
     const keyw = keyword.toLowerCase();
-    const artists = this.artists.filter(artist => artist.name.toLowerCase().includes(keyw));
+    const artists = this.artists.filter(artist => artist.getName().toLowerCase().includes(keyw));
     const albums = this.allAlbums().filter(album => album.name.toLowerCase().includes(keyw));
     const tracks = this.allTracks().filter(track => track.name.toLowerCase().includes(keyw));
     const playlists = this.playlists.filter(playlist => playlist.name.toLowerCase().includes(keyw));
@@ -205,7 +205,7 @@ export default class UNQfy {
   
   searchArtistsByName(keyword: string){
     const keyw = keyword.toLowerCase();
-    const artists = this.artists.filter(artist => artist.name.toLowerCase().includes(keyw));
+    const artists = this.artists.filter(artist => artist.getName().toLowerCase().includes(keyw));
     let artistList = [];
     artists.forEach(artist => artistList.push(artist.toJSON()))
     return artistList;
@@ -225,6 +225,12 @@ export default class UNQfy {
     let trackList = [];
     tracks.forEach(track => trackList.push(track.toJSON()))
     return trackList;
+  }
+
+  getAllArtists(){
+    let res = [];
+    this.artists.forEach(artist => res.push(artist.toJSON()));
+    return res;
   }
 
   // name: nombre de la playlist
@@ -264,8 +270,8 @@ export default class UNQfy {
     }
     return {
       artistId: element.id,
-      name: element.name,
-      country: element.country,
+      name: element.getName(),
+      country: element.getCountry(),
       albums
     }
   }

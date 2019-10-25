@@ -1,4 +1,11 @@
 import ElementAreadyExistsError from './libs/exceptions/ElementAlreadyExistsError';
+import ElementNotFoundError from './libs/exceptions/ElementNotFoundError';
+import APIError from './api_modules/exceptions/APIError';
+import ResourceNotFound from './api_modules/exceptions/ResourceNotFound';
+import RelatedResourceNotFound from './api_modules/exceptions/RelatedResourceNotFound';
+import BadRequest from './api_modules/exceptions/BadRequest';
+import ResourceAlreadyExists from './api_modules/exceptions/ResourceAlreadyExists';
+import InternalServerError from './api_modules/exceptions/InternalServerError';
 
 import fs from 'fs'; // necesitado para guardar/cargar unqfy
 const unqmod = require('./libs/unqfy');
@@ -16,34 +23,43 @@ function saveUNQfy(unqfy, filename = './data.json') {
 };
 
 import express from 'express';
+import bodyParser from 'body-parser';
 import UNQfy from './libs/unqfy';
 
 let port = process.env.PORT || 8080;
 
 const rootApp = express();
 
-
 // Routing module for /artists
 const artists = express();
+artists.use(bodyParser.urlencoded({ extended: true }));
+artists.use(bodyParser.json());
 
 artists.route( '/artists')
     .get((req, res) => {
-        if (req.query.name){
-            const unqfy: UNQfy = getUNQfy();
-            const results = unqfy.searchArtistsByName(req.query.name);
-            res.json({results});
-            res.status(200);
+        try {
+            if (req.query.name){
+                const unqfy: UNQfy = getUNQfy();
+                const results = unqfy.searchArtistsByName(req.query.name);
+                res.json(results);
+                res.status(200);
+            } else {
+                const unqfy: UNQfy = getUNQfy();
+                const results = unqfy.getAllArtists();
+                res.json(results);
+                res.status(200);
+            }
+        } catch(e) {
+            throw new InternalServerError;
         }
-        else
-            throw new ResourceNotFound;
     })
     .post((req, res) => {
         if (req.body.name && req.body.country){
-            const unqfy : UNQfy = getUNQfy();
             try {
+                const unqfy : UNQfy = getUNQfy();
                 const artist = unqfy.addArtist({name: req.body.name, country: req.body.country});
                 saveUNQfy(unqfy);
-                res.json(artist);
+                res.json(artist.toJSON());
                 res.status(201);
             } catch(e){
                 if (e instanceof ElementAreadyExistsError){
@@ -59,18 +75,58 @@ artists.route( '/artists')
 
 artists.route('/artists/:artistId')
     .get((req, res) => {
-        res.json({ message: "Hiciste un get a /api/artists/id"})
+        try {
+            const unqfy : UNQfy = getUNQfy();
+            const artist = unqfy.getArtistById(req.params.artistId);
+            res.json(artist.toJSON());
+            res.status(200);
+        } catch(e) {
+            if (e instanceof ElementNotFoundError){
+                throw new ResourceNotFound;
+            } else {
+                throw new InternalServerError;
+            }
+        }
     })
     .patch((req, res) => {
-        res.json({ message: "Hiciste un patch a /api/artists/id"})
+        if (req.body.name && req.body.country){
+            try {
+                const unqfy : UNQfy = getUNQfy();
+                const artist = unqfy.getArtistById(req.params.artistId);
+                artist.changeParameters(req.body.name, req.body.country);
+                saveUNQfy(unqfy);
+                res.json(artist.toJSON());
+                res.status(201);
+            } catch(e){
+                if (e instanceof ElementAreadyExistsError){
+                    throw new ResourceAlreadyExists;
+                } else if (e instanceof ElementNotFoundError){
+                    throw new ResourceNotFound;
+                } else {
+                    throw new InternalServerError;
+                }
+            }
+        } else {
+            throw new BadRequest;
+        }  
     })
     .delete((req, res) => {
-        res.json({ message: "Hiciste un delete a /api/artists/id"})
+        try {
+            const unqfy : UNQfy = getUNQfy();
+            unqfy.deleteArtist(req.params.artistId);
+            res.status(204);
+        } catch(e) {
+            if (e instanceof ElementNotFoundError){
+                throw new ResourceNotFound;
+            } else {
+                throw new InternalServerError;
+            }
+        }
     });
 
 function artistErrorHandler(err, req, res, next) {
     console.error(err);
-    if (err instanceof ResourceNotFound){
+    if (err instanceof APIError){
         res.status(err.status);
         res.json({status: err.status, errorCode: err.errorCode});
     } else if (err.type === 'entity.parse.failed'){
@@ -86,13 +142,20 @@ artists.use(artistErrorHandler);
 // Routing module for /albums
 const albums = express();
 
+albums.use(bodyParser.urlencoded({ extended: true }));
+albums.use(bodyParser.json());
+
 albums.route( '/albums')
     .get((req, res) => {
         if (req.query.name){
-            const unqfy: UNQfy = getUNQfy();
-            const results = unqfy.searchAlbumsByName(req.query.name);
-            res.json({results});
-            res.status(200);
+            try{
+                const unqfy: UNQfy = getUNQfy();
+                const results = unqfy.searchAlbumsByName(req.query.name);
+                res.json({results});
+                res.status(200);
+            } catch(e){
+                throw new InternalServerError;
+            }
         }
         else
             throw new ResourceNotFound();
@@ -115,6 +178,9 @@ albums.route( '/albums')
     
     // Routing module for /tracks
 const tracks = express();
+
+tracks.use(bodyParser.urlencoded({ extended: true }));
+tracks.use(bodyParser.json());
     
 tracks.route('/tracks/:trackId/lyrics')
     .get((req, res) => {
@@ -124,6 +190,9 @@ tracks.route('/tracks/:trackId/lyrics')
     
 // Routing module for /playlists
 const playlists = express();
+
+playlists.use(bodyParser.urlencoded({ extended: true }));
+playlists.use(bodyParser.json());
 
 playlists.route('/playlists')
     .get((req, res) => {
@@ -149,7 +218,22 @@ playlists.route('/playlists/:playlistsId')
 /* Pendiente de implementación */
 const users = express();
 
+users.use(bodyParser.urlencoded({ extended: true }));
+users.use(bodyParser.json());
 
+function rootErrorHandler(err, req, res, next) {
+    console.error(err);
+    if (err instanceof ResourceNotFound){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: err.errorCode});
+    } else {
+        next(err);
+    }
+}
 rootApp.use('/api', artists, albums, tracks, playlists, users,);
+rootApp.all('*', (req, res) => {
+    throw new ResourceNotFound;
+})
+rootApp.use(rootErrorHandler);
 
 rootApp.listen(port);
