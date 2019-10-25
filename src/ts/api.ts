@@ -77,7 +77,7 @@ albums.route( '/albums')
     });
     
     
-    // Routing module for /tracks
+// Routing module for /tracks
 const tracks = express();
 
 tracks.use(bodyParser.urlencoded({ extended: true }));
@@ -122,6 +122,8 @@ const users = express();
 users.use(bodyParser.urlencoded({ extended: true }));
 users.use(bodyParser.json());
 
+
+// Routing module for root
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
     if (err instanceof ResourceNotFound){
