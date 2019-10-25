@@ -153,19 +153,7 @@ albums.use(body_parser_1.default.urlencoded({ extended: true }));
 albums.use(body_parser_1.default.json());
 albums.route('/albums')
     .get((req, res) => {
-    if (req.query.name) {
-        try {
-            const unqfy = getUNQfy();
-            const results = unqfy.searchAlbumsByName(req.query.name);
-            res.json({ results });
-            res.status(200);
-        }
-        catch (e) {
-            throw new InternalServerError_1.default;
-        }
-    }
-    else
-        throw new ResourceNotFound_1.default();
+    res.json({ message: "Hiciste un get a /api/albums" });
 })
     .post((req, res) => {
     res.json({ message: "Hiciste un post a /api/albums" });
