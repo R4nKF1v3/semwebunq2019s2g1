@@ -1,15 +1,18 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const picklify = require("picklify");
 const fs = require("fs");
-const Artist_1 = require("./Artist");
-const Album_1 = require("./Album");
-const Track_1 = require("./Track");
-const Playlist_1 = require("./Playlist");
-const User_1 = require("./User");
-const ElementAlreadyExistsError_1 = require("./exceptions/ElementAlreadyExistsError");
-const ElementNotFoundError_1 = require("./exceptions/ElementNotFoundError");
-const HistoryEvent_1 = require("./HistoryEvent");
+const Artist_1 = __importDefault(require("./Artist"));
+const Album_1 = __importDefault(require("./Album"));
+const Track_1 = __importDefault(require("./Track"));
+const Playlist_1 = __importDefault(require("./Playlist"));
+const User_1 = __importDefault(require("./User"));
+const ElementAlreadyExistsError_1 = __importDefault(require("./exceptions/ElementAlreadyExistsError"));
+const ElementNotFoundError_1 = __importDefault(require("./exceptions/ElementNotFoundError"));
+const HistoryEvent_1 = __importDefault(require("./HistoryEvent"));
 class UNQfy {
     constructor() {
         this.idCounter = {
@@ -165,6 +168,27 @@ class UNQfy {
         const tracks = this.allTracks().filter(track => track.name.toLowerCase().includes(keyw));
         const playlists = this.playlists.filter(playlist => playlist.name.toLowerCase().includes(keyw));
         return { artists, albums, tracks, playlists };
+    }
+    searchArtistsByName(keyword) {
+        const keyw = keyword.toLowerCase();
+        const artists = this.artists.filter(artist => artist.name.toLowerCase().includes(keyw));
+        let artistList = [];
+        artists.forEach(artist => artistList.push(artist.toJSON()));
+        return artistList;
+    }
+    searchAlbumsByName(keyword) {
+        const keyw = keyword.toLowerCase();
+        const albums = this.allAlbums().filter(album => album.name.toLowerCase().includes(keyw));
+        let albumList = [];
+        albums.forEach(album => albumList.push(album.toJSON()));
+        return albumList;
+    }
+    searchTracksByName(keyword) {
+        const keyw = keyword.toLowerCase();
+        const tracks = this.allTracks().filter(track => track.name.toLowerCase().includes(keyw));
+        let trackList = [];
+        tracks.forEach(track => trackList.push(track.toJSON()));
+        return trackList;
     }
     // name: nombre de la playlist
     // genresToInclude: array de generos

@@ -7,6 +7,14 @@ class Track {
         this.duration = duration;
         this.genres = genres;
     }
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            duration: this.duration,
+            genres: this.genres
+        };
+    }
     containsGenre(genres) {
         return genres.some(genre => this.genres.includes(genre));
     }

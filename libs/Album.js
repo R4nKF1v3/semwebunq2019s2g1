@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Track_1 = require("./Track");
-const ElementAlreadyExistsError_1 = require("./exceptions/ElementAlreadyExistsError");
+const Track_1 = __importDefault(require("./Track"));
+const ElementAlreadyExistsError_1 = __importDefault(require("./exceptions/ElementAlreadyExistsError"));
 class Album {
     constructor(id, name, year, artist) {
         this.id = id;
@@ -27,6 +30,16 @@ class Album {
     }
     getTracks() {
         return this.tracks;
+    }
+    toJSON() {
+        let trackList = [];
+        this.tracks.forEach(track => trackList.push(track.toJSON()));
+        return {
+            id: this.id,
+            name: this.name,
+            year: this.year,
+            tracks: trackList
+        };
     }
 }
 exports.default = Album;

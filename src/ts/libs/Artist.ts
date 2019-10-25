@@ -101,4 +101,15 @@ export default class Artist {
     });
   }
 
+  toJSON(){
+    let albumList = [];
+    this.albums.forEach(album => albumList.push(album.toJSON()));
+    return {
+      id: this.id,
+      name: this.name,
+      country: this.country,
+      albums: albumList,
+    }
+  }
+
 }

@@ -4,7 +4,9 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
+    "@types/express": "^4.17.1",
     "chai": "^4.1.2",
+    "express": "^4.17.1",
     "picklify": "github:lwoites/picklify",
     "typescript": "^3.6.2"
   },

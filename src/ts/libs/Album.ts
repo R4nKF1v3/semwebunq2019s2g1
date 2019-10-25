@@ -38,4 +38,15 @@ export default class Album{
     return this.tracks;
   }
 
+  toJSON(){
+    let trackList = [];
+    this.tracks.forEach(track => trackList.push(track.toJSON()));
+    return {
+      id: this.id,
+      name: this.name,
+      year: this.year,
+      tracks: trackList
+    }
+  }
+
 }

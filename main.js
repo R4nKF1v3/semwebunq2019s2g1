@@ -1,10 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs"); // necesitado para guardar/cargar unqfy
 const unqmod = require('./libs/unqfy'); // importamos el modulo unqfy
 const process = require("process");
-const InvalidCommandError_1 = require("./libs/exceptions/InvalidCommandError");
-const InsufficientParametersError_1 = require("./libs/exceptions/InsufficientParametersError");
+const InvalidCommandError_1 = __importDefault(require("./libs/exceptions/InvalidCommandError"));
+const InsufficientParametersError_1 = __importDefault(require("./libs/exceptions/InsufficientParametersError"));
 // Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.
 function getUNQfy(filename = 'data.json') {
     let unqfy = new unqmod.UNQfy();

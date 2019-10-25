@@ -14,6 +14,15 @@ export default class Track{
     this.genres = genres;
   }
 
+  toJSON(){
+    return {
+      id: this.id,
+      name: this.name,
+      duration: this.duration,
+      genres: this.genres
+    }
+  }
+
   containsGenre(genres: Array<string>): boolean{
     return genres.some(genre => this.genres.includes(genre));
   }

@@ -202,6 +202,30 @@ export default class UNQfy {
     const playlists = this.playlists.filter(playlist => playlist.name.toLowerCase().includes(keyw));
     return {artists, albums, tracks, playlists};
   }
+  
+  searchArtistsByName(keyword: string){
+    const keyw = keyword.toLowerCase();
+    const artists = this.artists.filter(artist => artist.name.toLowerCase().includes(keyw));
+    let artistList = [];
+    artists.forEach(artist => artistList.push(artist.toJSON()))
+    return artistList;
+  }
+  
+  searchAlbumsByName(keyword: string){
+    const keyw = keyword.toLowerCase();
+    const albums = this.allAlbums().filter(album => album.name.toLowerCase().includes(keyw));
+    let albumList = [];
+    albums.forEach(album => albumList.push(album.toJSON()))
+    return albumList;
+  }
+
+  searchTracksByName(keyword: string){
+    const keyw = keyword.toLowerCase();
+    const tracks = this.allTracks().filter(track => track.name.toLowerCase().includes(keyw));
+    let trackList = [];
+    tracks.forEach(track => trackList.push(track.toJSON()))
+    return trackList;
+  }
 
   // name: nombre de la playlist
   // genresToInclude: array de generos

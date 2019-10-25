@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Album_1 = require("./Album");
-const ElementAlreadyExistsError_1 = require("./exceptions/ElementAlreadyExistsError");
+const Album_1 = __importDefault(require("./Album"));
+const ElementAlreadyExistsError_1 = __importDefault(require("./exceptions/ElementAlreadyExistsError"));
 class Artist {
     constructor(id, name, country) {
         this.id = id;
@@ -87,6 +90,16 @@ class Artist {
             /*hacer algo con response*/
             //Operar sobre la respuesta tomando solo los datos necesarios para crear los albums (Name y ReleaseDate, del cual solo tomamos el año)
         });
+    }
+    toJSON() {
+        let albumList = [];
+        this.albums.forEach(album => albumList.push(album.toJSON()));
+        return {
+            id: this.id,
+            name: this.name,
+            country: this.country,
+            albums: albumList,
+        };
     }
 }
 exports.default = Artist;
