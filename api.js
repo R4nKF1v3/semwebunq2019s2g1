@@ -102,6 +102,7 @@ playlists.route('/playlists/:playlistsId')
 const users = express_1.default();
 users.use(body_parser_1.default.urlencoded({ extended: true }));
 users.use(body_parser_1.default.json());
+// Routing module for root
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
     if (err instanceof ResourceNotFound_1.default) {

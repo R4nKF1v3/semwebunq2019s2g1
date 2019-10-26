@@ -305,7 +305,7 @@ class UNQfy {
     }
     populateAlbumsForArtist(artistName) {
         const artist = this.getArtistById(artistName);
-        return artist.populateAlbums();
+        return artist.populateAlbums(this);
     }
     getLyricsFor(trackId) {
         const track = this.getTrackById(trackId);

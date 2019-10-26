@@ -356,7 +356,7 @@ export default class UNQfy {
 
   populateAlbumsForArtist(artistName: string){
     const artist = this.getArtistById(artistName);
-    return artist.populateAlbums();
+    return artist.populateAlbums(this);
   }
 
   getLyricsFor(trackId: string): string{
