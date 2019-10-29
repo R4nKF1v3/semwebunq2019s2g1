@@ -1,3 +1,4 @@
+import SpotifyClient from "./clients/SpotifyClient";
 import Album from "./Album";
 import Track from "./Track";
 import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
@@ -94,46 +95,31 @@ export default class Artist {
   }
 
   populateAlbums(unqfy: UNQfy){
-    //Buscar id del track en Spotify
-    
-    //Hacer el procedimiento de conseguir el token y usarlo reemplazando el ACCESS_TOKEN
-    //Una vez con el id hacer el request del JSON
-    const requestFile = require('request-promise');
-    
-    requestFile.then((res)=>{
-      const request = require('request-promise');
-      
-        const options = {
-          url: encodeURI('https://api.spotify.com/v1/search?q='+this.name+'&type=artist'),
-          headers: { Authorization: 'Bearer ' + 'BQDvvkxr2LUrnQGmM2bFInlr7Ugpvuomjw3kp40IkVimOTLk9vlN7n8DjILwOeG_-xmzt7OCZPI8JzqvmgUVz7eYNHqwozsFNupCD1nh0k9UgNUEHO_vs-mkhr-K5-FYNJioOPX5r-uCjUeiI3aHtxjW_vy_L0BsM2BScQ' },
-          json: true,
-          };
-          return request.get(options)
-    }).then((response: any) => {
+    const client = new SpotifyClient;
+    client.queryArtistName(this.name)
+      .then((response) => {
         
         console.log(response.artists.items[0]);
         let artistId = response.artists.items[0].id;
       
-        const rp = require('request-promise');
-        const options = {
-          url: 'https://api.spotify.com/v1/artists/'+artistId+'/albums',
-          headers: { Authorization: 'Bearer ' + 'BQDvvkxr2LUrnQGmM2bFInlr7Ugpvuomjw3kp40IkVimOTLk9vlN7n8DjILwOeG_-xmzt7OCZPI8JzqvmgUVz7eYNHqwozsFNupCD1nh0k9UgNUEHO_vs-mkhr-K5-FYNJioOPX5r-uCjUeiI3aHtxjW_vy_L0BsM2BScQ' },
-          json: true,
-        };
-      
-        return rp.get(options)
+        return client.queryArtistAlbums(artistId);
       }).then(res => {
         console.log(res);
         let albumList = res.items;
         albumList.forEach(albResponse => {
           
           let albumData = {name: albResponse.name, year: albResponse.release_date.substring(0,3)}
-          this.addAlbum(albumData, unqfy)
+          try
+              { this.addAlbum(albumData, unqfy) }
+          catch(error){
+             console.log(error.message);
+          }
         });
-        this.getAlbumsNames();
+        console.log( this.getAlbumsNames());
       }).catch(err =>{
         console.log(err);
       });
+
   }
 
   changeParameters(name: string, country: string){
