@@ -1,6 +1,9 @@
 import APIError from './api_modules/exceptions/APIError';
 import ResourceNotFound from './api_modules/exceptions/ResourceNotFound';
 import ArtistController from './api_modules/controllers/ArtistController';
+import AlbumController from './api_modules/controllers/AlbumController';
+import TrackController from './api_modules/controllers/TrackController';
+import PlaylistController from './api_modules/controllers/PlaylistController';
 
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -57,35 +60,38 @@ const albums = express();
 albums.use(bodyParser.urlencoded({ extended: true }));
 albums.use(bodyParser.json());
 
-albums.route( '/albums')
+const albumController = new AlbumController();
+
+albums.route( '/albums/:id')
     .get((req, res) => {
-        res.json({ message: "Hiciste un get a /api/albums"})
-    })
-    .post((req, res) => {
-        res.json({ message: "Hiciste un post a /api/albums"})        
-    });
-    
-    albums.route('/albums/:albumsId')
-    .get((req, res) => {
-        res.json({ message: "Hiciste un get a /api/albums/id"})
+        res.json(albumController.handleGetAlbumById(req,res))
     })
     .patch((req, res) => {
-        res.json({ message: "Hiciste un patch a /api/albums/id"})
+        res.json(albumController.handleUpdateAlbumById(req,res))
     })
     .delete((req, res) => {
-        res.json({ message: "Hiciste un delete a /api/albums/id"})
+        res.json(albumController.handleDeleteAlbumById(req,res))
     });
-    
+
+albums.route( '/albums/')
+    .get((req, res) => {
+        res.json(albumController.handleGetAlbums(req,res))
+    })
+    .post((req, res) => {
+        res.json(albumController.handleNewAlbum(req,res))
+    });
     
 // Routing module for /tracks
 const tracks = express();
 
 tracks.use(bodyParser.urlencoded({ extended: true }));
 tracks.use(bodyParser.json());
+
+const trackController = new TrackController();
     
 tracks.route('/tracks/:trackId/lyrics')
     .get((req, res) => {
-        res.json({ message: "Hiciste un get a /api/tracks/<trackId>/lyrics"})
+        res.json(trackController.handleGetTrackLyricsByTrackId(req,res))
     });
     
     
@@ -95,23 +101,19 @@ const playlists = express();
 playlists.use(bodyParser.urlencoded({ extended: true }));
 playlists.use(bodyParser.json());
 
+const playlistController = new PlaylistController();
+
 playlists.route('/playlists')
-    .get((req, res) => {
-        res.json({ message: "Hiciste un get a /api/playlists"})
-    })
     .post((req, res) => {
-        res.json({ message: "Hiciste un post a /api/playlists"})        
+        res.json(playlistController.handleNewPlaylist(req,res));
     });
 
 playlists.route('/playlists/:playlistsId')
     .get((req, res) => {
-        res.json({ message: "Hiciste un get a /api/playlists/id"})
-    })
-    .post((req, res) => {
-        res.json({ message: "Hiciste un patch a /api/playlists/id"})
+        res.json(playlistController.handleGetPlaylistById(req,res))
     })
     .delete((req, res) => {
-        res.json({ message: "Hiciste un delete a /api/playlists/id"})
+        res.json(playlistController.handleDeletePlaylistById(req,res))
     });
     
 

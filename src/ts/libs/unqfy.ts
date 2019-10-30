@@ -29,13 +29,13 @@ export default class UNQfy {
     this.users = [];
   }
 
-  private allTracks(): Array<Track> {
+  public allTracks(): Array<Track> {
     return this.allAlbums().reduce( (acum, album) => 
         acum.concat(album.getTracks()), []
     );
   }
 
-  private allAlbums(): Array<Album> {
+  public allAlbums(): Array<Album> {
     return this.artists.reduce( (acum, artist) => 
         acum.concat(artist.getAlbums()), []
     );
@@ -244,6 +244,21 @@ export default class UNQfy {
     console.log(this.playlists)
     return newPlaylist;
   }
+
+  // name: nombre de la playlist
+  // genresToInclude: array de generos
+  // maxDuration: duración en segundos
+  // retorna: la nueva playlist creada
+  createPlaylistWithGivenTracks(name : string, tracks : Array<Track>) {
+    const genres = tracks.reduce((acum, track) => acum.concat(track.genres), []);
+    const duration = tracks.reduce( (acum, track) => acum + track.duration, 0);
+    const newPlaylist = new Playlist(this.getNewPlaylistId(), name, genres, duration);
+    tracks.forEach( t => newPlaylist.getTracks().push(t) );
+    this.playlists.push(newPlaylist);
+    console.log(this.playlists)
+    return newPlaylist;
+  }
+
 
   listPlaylist(searchParam: any) {
     let element: Playlist;

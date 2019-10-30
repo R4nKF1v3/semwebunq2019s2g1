@@ -17,5 +17,28 @@ export default class Controller{
         unqfy.save(filename);
     }
 
+    isEmptyString(value: any): Boolean {
+        const result: Boolean = false ||
+            value == null ||
+            typeof value != 'string' ||
+            value == '';
+        return result;
+    }
+
+    isEmptyArray(value: any): Boolean {
+        const result: Boolean = false ||
+            value == null ||
+            !Array.isArray(value) ||
+            value.length == 0;
+        return result;
+    }
+
+    isPositiveNumber(value: any): Boolean {
+        const result: Boolean = false ||
+            !isNaN(value) &&
+            value >= 0;
+        return result;
+    }
+
 }
 

@@ -43,4 +43,13 @@ export default class Playlist{
     return this.tracks;
   }
 
+  toJSON() {
+    return {
+      "id": this.id,
+      "name": this.name,
+      "duration": this.maxDuration,
+      "tracks": this.tracks
+    };
+  }
+
 }

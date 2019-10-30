@@ -5,7 +5,7 @@ import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 export default class Album{
   readonly id: number;
   readonly name: string;
-  readonly year: number;
+  public year: number;
   private tracks: Array<Track>;
   
   constructor(id: number, name: string, year: number, artist: Artist) {
@@ -17,7 +17,7 @@ export default class Album{
 
   addTrack(trackData: any, unqfy): Track {
     if (this.trackDoesNotExist(trackData)){
-      const newTrack = new Track(unqfy.getNewTrackId(), trackData.name, trackData.duration, trackData.genres, this);
+      const newTrack = new Track(unqfy.getNewTrackId(), trackData.name, Number.parseInt(trackData.duration), trackData.genres, this);
       this.tracks.push(newTrack);
       return newTrack;
     } else {
