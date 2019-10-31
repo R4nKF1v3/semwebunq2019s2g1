@@ -106,7 +106,11 @@ const playlistController = new PlaylistController();
 playlists.route('/playlists')
     .post((req, res) => {
         res.json(playlistController.handleNewPlaylist(req,res));
-    });
+    })
+    .get((req, res) => {
+        res.json(playlistController.handleQueryPlaylists(req,res))
+    })
+;
 
 playlists.route('/playlists/:playlistsId')
     .get((req, res) => {

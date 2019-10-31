@@ -59,6 +59,28 @@ export default class PlaylistController extends Controller{
             }
         }
     }
+    
+    handleQueryPlaylists(req, res) {
+        try {
+            let playlists = this.getUNQfy().getPlaylists();
+
+            if (!this.isEmptyString(req.query.name))
+                playlists = playlists.filter( p => p.name == req.query.name);
+            if (this.isPositiveNumber(req.query.durationLT) )
+                playlists = playlists.filter( p => p.duration() < Number.parseInt(req.query.durationLT) );
+            if (this.isPositiveNumber(req.query.durationGT) )
+                playlists = playlists.filter( p => p.duration() > Number.parseInt(req.query.durationGT) );
+                
+            res.json(playlists);
+        } catch(e) {
+            console.log(e);
+            if (e instanceof ElementNotFoundError){
+                throw new ResourceNotFound;
+            } else {
+                throw new InternalServerError;
+            }
+        }
+    }
 
     handleGetPlaylistById(req, res){
         try {

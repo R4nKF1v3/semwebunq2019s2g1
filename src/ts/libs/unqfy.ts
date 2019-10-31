@@ -140,6 +140,13 @@ export default class UNQfy {
     return this.genericSearch(id, this.playlists, "playlist");
   }
 
+  //getPlaylists(id : any): Playlist {
+  //  return this.genericSearch(id, this.playlists, "playlist");
+  //}
+  getPlaylists(): Array<Playlist> {
+    return this.playlists;
+  }
+
   deleteArtist(artistId: any) {
     const artistToDelete = this.getArtistById(artistId);
     const artistAlbums = artistToDelete.getAlbums();

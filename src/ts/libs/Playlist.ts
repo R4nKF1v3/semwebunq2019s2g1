@@ -47,7 +47,7 @@ export default class Playlist{
     return {
       "id": this.id,
       "name": this.name,
-      "duration": this.maxDuration,
+      "duration": this.duration(),
       "tracks": this.tracks
     };
   }
