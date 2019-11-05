@@ -33,7 +33,7 @@ export default class MusixmatchClient {
             json: true // Automatically parses the JSON string in the response
         };
         
-          rp.get(
+          return rp.get(
             options
         ).then((response) => {
             var header = response.message.header;
@@ -72,7 +72,7 @@ export default class MusixmatchClient {
             json: true // Automatically parses the JSON string in the response
         };
        
-        rp.get(
+        return rp.get(
             options
         ).then((response) => {
             const requestFile = require('request-promise');
@@ -89,7 +89,7 @@ export default class MusixmatchClient {
         }).catch((error) => {
             console.log('algo salio mal', error);
         });
-        return rp();
+        
                
         
     }   

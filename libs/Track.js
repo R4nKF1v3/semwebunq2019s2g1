@@ -35,14 +35,10 @@ class Track {
             .then((response) => {
             console.log(response);
             let trackId = response;
-            return client.queryTrackName(trackId);
-        }).then(res => {
-            console.log(res);
-            client.queryTrackLyrics(res)
-                .then((lyrics) => {
-                this.lyrics = lyrics;
-                return this.lyrics;
-            });
+            return client.queryTrackLyrics(trackId);
+        }).then((lyrics) => {
+            this.lyrics = lyrics;
+            return this.lyrics;
         });
     }
 }

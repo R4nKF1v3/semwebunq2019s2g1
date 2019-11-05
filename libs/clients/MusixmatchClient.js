@@ -1,15 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Track_1 = __importDefault(require("../Track"));
 const util = require("util");
 const fs = require("fs");
 const readFilePromise = util.promisify(fs.readFile);
 class MusixmatchClient {
     queryTrackName(name) {
-        this.tracks.forEach(track => {
+        this.cache.forEach(track => {
             if (track.name == name) {
                 return track.id;
             }
@@ -28,7 +24,8 @@ class MusixmatchClient {
             var header = response.message.header;
             var body = response.message.body;
             var trackId = body.track_list[0].track;
-            this.tracks.push(new Track_1.default(trackId.track_id, trackId.track_name, 0, trackId.primary_genres, trackId.album_name));
+            this.cache.push({ name: trackId.track_name, id: trackId.track_id });
+            //this.tracks.push(new Track(trackId.track_id, trackId.track_name, 0, trackId.primary_genres, trackId.album_name));
             //console.log(body);
             if (header.status_code !== 200) {
                 throw new Error('status code != 200');
@@ -50,7 +47,7 @@ class MusixmatchClient {
             },
             json: true // Automatically parses the JSON string in the response
         };
-        rp.get(options).then((response) => {
+        return rp.get(options).then((response) => {
             const requestFile = require('request-promise');
             var header = response.message.header;
             var body = response.message.body;
@@ -62,7 +59,6 @@ class MusixmatchClient {
         }).catch((error) => {
             console.log('algo salio mal', error);
         });
-        return rp();
     }
 }
 exports.default = MusixmatchClient;
