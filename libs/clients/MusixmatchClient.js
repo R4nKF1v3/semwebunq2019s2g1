@@ -1,44 +1,46 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const util = require("util");
-const fs = require("fs");
-const readFilePromise = util.promisify(fs.readFile);
+const NoLyricsFoundForTrack_1 = __importDefault(require("../exceptions/NoLyricsFoundForTrack"));
+const BASE_URL = 'http://api.musixmatch.com/ws/1.1';
 class MusixmatchClient {
-    queryTrackName(name) {
-        this.cache.forEach(track => {
-            if (track.name == name) {
+    constructor() {
+        this.idCache = [];
+    }
+    queryTrackId(name, artistName) {
+        this.idCache.forEach(track => {
+            if (track.name === name && track.artistName === artistName) {
                 return track.id;
             }
         });
         const rp = require('request-promise');
-        const BASE_URL = 'http://api.musixmatch.com/ws/1.1';
         var options = {
             uri: BASE_URL + '/track.search',
             qs: {
                 apikey: '1590d2f1e38d79145981ae0f60a2b78e',
                 q_track: name,
+                q_artist: artistName,
+                f_has_lyrics: true
             },
             json: true // Automatically parses the JSON string in the response
         };
-        rp.get(options).then((response) => {
-            var header = response.message.header;
+        return rp.get(options)
+            .then((response) => {
             var body = response.message.body;
-            var trackId = body.track_list[0].track;
-            this.cache.push({ name: trackId.track_name, id: trackId.track_id });
-            //this.tracks.push(new Track(trackId.track_id, trackId.track_name, 0, trackId.primary_genres, trackId.album_name));
-            //console.log(body);
-            if (header.status_code !== 200) {
-                throw new Error('status code != 200');
+            var track = body.track_list.find(track => track.track.artist_name.toLowerCase() == artistName.toLowerCase());
+            if (track) {
+                this.idCache.push({ artistName, name, id: track.track.track_id });
+                return track.track.track_id;
             }
-            return trackId.track_id;
-        }).catch((error) => {
-            console.log('algo salio mal', error);
+            else {
+                throw new NoLyricsFoundForTrack_1.default(name);
+            }
         });
-        return rp();
     }
     queryTrackLyrics(track_id) {
         const rp = require('request-promise');
-        const BASE_URL = 'http://api.musixmatch.com/ws/1.1';
         var options = {
             uri: BASE_URL + '/track.lyrics.get',
             qs: {
@@ -47,17 +49,9 @@ class MusixmatchClient {
             },
             json: true // Automatically parses the JSON string in the response
         };
-        return rp.get(options).then((response) => {
-            const requestFile = require('request-promise');
-            var header = response.message.header;
-            var body = response.message.body;
-            console.log(body);
-            /* if (header.status_code !== 200){
-                 throw new Error('status code != 200');
-             }*/
-            return body.lyrics[0].lyrics_body;
-        }).catch((error) => {
-            console.log('algo salio mal', error);
+        return rp.get(options)
+            .then((response) => {
+            return response.message.body.lyrics;
         });
     }
 }

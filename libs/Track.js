@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MusixmatchClient_1 = __importDefault(require("./clients/MusixmatchClient"));
+const NoLyricsFoundForTrack_1 = __importDefault(require("./exceptions/NoLyricsFoundForTrack"));
 class Track {
     constructor(id, name, duration, genres, album) {
         this.id = id;
@@ -26,19 +27,31 @@ class Track {
         const res = this.genres.filter(genre => genres.includes(genre));
         return res.length === this.genres.length && res.length === genres.length;
     }
-    getLyrics() {
+    getLyrics(artist, callback, unqfy) {
         const client = new MusixmatchClient_1.default;
         if (this.lyrics) {
-            return this.lyrics;
+            callback(this.lyrics, unqfy);
+            return;
         }
-        client.queryTrackName(this.name)
+        client.queryTrackId(this.name, artist.getName())
             .then((response) => {
-            console.log(response);
             let trackId = response;
             return client.queryTrackLyrics(trackId);
-        }).then((lyrics) => {
-            this.lyrics = lyrics;
-            return this.lyrics;
+        })
+            .then((lyrics) => {
+            if (lyrics) {
+                if (lyrics.lyrics_body.length === 0) {
+                    throw new NoLyricsFoundForTrack_1.default(this.name);
+                }
+                this.lyrics = lyrics.lyrics_body;
+                callback(this.lyrics, unqfy);
+            }
+            else {
+                throw new NoLyricsFoundForTrack_1.default(this.name);
+            }
+        })
+            .catch((error) => {
+            console.log(error.message);
         });
     }
 }

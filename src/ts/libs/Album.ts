@@ -38,6 +38,10 @@ export default class Album{
     return this.tracks;
   }
 
+  hasTrack(track: Track): boolean{
+    return this.tracks.includes(track);
+  }
+
   toJSON(){
     let trackList = [];
     this.tracks.forEach(track => trackList.push(track.toJSON()));

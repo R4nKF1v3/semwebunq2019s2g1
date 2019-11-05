@@ -94,7 +94,7 @@ export default class Artist {
     return times;
   }
 
-  populateAlbums(unqfy: UNQfy){
+  populateAlbums(unqfy: UNQfy, callback){
     const client = new SpotifyClient;
     client.queryArtistName(this.name)
       .then((response) => {
@@ -115,9 +115,9 @@ export default class Artist {
              console.log(error.message);
           }
         });
-        console.log( this.getAlbumsNames());
+        callback(this.getAlbumsNames(), unqfy);
       }).catch(err =>{
-        console.log(err);
+        console.log(err.message);
       });
 
   }
@@ -125,6 +125,10 @@ export default class Artist {
   changeParameters(name: string, country: string){
     this.name = name;
     this.country = country;
+  }
+
+  hasTrack(track: Track): boolean{
+    return this.albums.some(album => album.hasTrack(track))
   }
 
   toJSON(){
