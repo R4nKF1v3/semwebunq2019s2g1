@@ -10,11 +10,11 @@ const readFilePromise = util.promisify(fs.readFile);
 
 export default class MusixmatchClient {
   
-    private tracks: Array<Track>;
+    private cache: Array<any>;
   
     queryTrackName(name: string): Promise<any> {
         
-        this.tracks.forEach(track => {
+        this.cache.forEach(track => {
             if(track.name == name){
                 return track.id;
             }
@@ -39,7 +39,10 @@ export default class MusixmatchClient {
             var header = response.message.header;
             var body = response.message.body;
             var trackId = body.track_list[0].track;
-            this.tracks.push(new Track(trackId.track_id, trackId.track_name, 0, trackId.primary_genres, trackId.album_name));
+            
+            this.cache.push( { name: trackId.track_name, id:trackId.track_id} );
+
+            //this.tracks.push(new Track(trackId.track_id, trackId.track_name, 0, trackId.primary_genres, trackId.album_name));
             //console.log(body);
             if (header.status_code !== 200){
                 throw new Error('status code != 200');
