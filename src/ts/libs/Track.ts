@@ -1,4 +1,6 @@
 import Album from "./Album";
+import MusixmatchClient from "./clients/MusixmatchClient";
+import { response } from "express";
 
 export default class Track{
   readonly id: number;
@@ -32,13 +34,28 @@ export default class Track{
     return res.length === this.genres.length && res.length === genres.length;
   }
 
-  getLyrics(): string{
-    if (this.lyrics){
-      return this.lyrics;
-    }
-    //Buscar id del track en MusixMatch
-      //Hacer el request del JSON con el id
-        //Operar sobre la respuesta y guardar y devolver el "lyrics_body" del response.body.lyrics en this.lyrics
-  }
-
+  getLyrics(): string {
+     const client = new MusixmatchClient;
+      
+     if (this.lyrics){
+        return this.lyrics;
+      }
+     
+    client.queryTrackName(this.name)
+    .then((response) => {
+      
+      
+      console.log(response);
+      let trackId = response;
+      return client.queryTrackName(trackId);
+    }).then(res => {
+      console.log(res);
+      client.queryTrackLyrics(res)
+    .then((lyrics)=> {
+        this.lyrics = lyrics;
+        return this.lyrics;
+      });
+    });
+  } 
 }
+      
