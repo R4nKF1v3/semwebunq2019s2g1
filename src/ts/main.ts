@@ -23,9 +23,11 @@ function main() {
   const unqfy = getUNQfy();
   try {
     const returnStatement = executeWith(unqfy, args[2], args.slice(3, args.length));
-    Object.entries(returnStatement).forEach(entry => {
-      console.log(entry[0] + ": " + JSON.stringify(entry[1]));
-    });
+    if (returnStatement){
+      Object.entries(returnStatement).forEach(entry => {
+        console.log(entry[0] + ": " + JSON.stringify(entry[1]));
+      });
+    }
     saveUNQfy(unqfy);
   } catch (e){
     console.log(e.message);
@@ -119,13 +121,18 @@ function executeWith(unqfy: UNQfy,command: string, args: Array<string>): any{
       return unqfy.getAlbumsForArtist(args[0]);
     case "populateAlbumsForArtist":
       checkParametersLength(args, 1, "populateAlbumsForArtist");
-      return unqfy.populateAlbumsForArtist(args[0]);
+      return unqfy.populateAlbumsForArtist(args[0], asyncCall);
     case "getLyricsForTrack":
       checkParametersLength(args, 1, "getLyricsForTrack");
-      return unqfy.getLyricsFor(args[0]);
+      return unqfy.getLyricsFor(args[0], asyncCall);
     default:
       throw new InvalidCommandError(command);
   }
+}
+
+function asyncCall(returnStatement: any, unqfy: UNQfy){
+  console.log(returnStatement);
+  saveUNQfy(unqfy);
 }
 
 function checkParametersLength(parameters: Array<string>, length: number, caseType: string){

@@ -376,14 +376,19 @@ export default class UNQfy {
     return artist.getAlbumsNames();
   }
 
-  populateAlbumsForArtist(artistName: string){
+  populateAlbumsForArtist(artistName: string, callback){
     const artist = this.getArtistById(artistName);
-    return artist.populateAlbums(this);
+    artist.populateAlbums(this, callback);
   }
 
-  getLyricsFor(trackId: string): string{
+  getLyricsFor(trackId: string, callback){
     const track = this.getTrackById(trackId);
-    return track.getLyrics()
+    const artist = this.getArtistForTrack(track);
+    track.getLyrics(artist, callback, this);
+  }
+
+  getArtistForTrack(track: Track): Artist{
+    return this.artists.find(artist => artist.hasTrack(track))
   }
 
   save(filename : string) {
