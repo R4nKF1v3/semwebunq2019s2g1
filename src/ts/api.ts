@@ -4,6 +4,7 @@ import ArtistController from './api_modules/controllers/ArtistController';
 import AlbumController from './api_modules/controllers/AlbumController';
 import TrackController from './api_modules/controllers/TrackController';
 import PlaylistController from './api_modules/controllers/PlaylistController';
+import UserController from './api_modules/controllers/UserController';
 
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -128,6 +129,25 @@ const users = express();
 users.use(bodyParser.urlencoded({ extended: true }));
 users.use(bodyParser.json());
 
+const userController = new UserController();
+
+users.route('/users/:userId')
+    .get((req, res) => {
+        res.json(userController.handleGetUserById(req,res));
+    })
+    .delete((req,res) => {
+        res.json(userController.handleDeleteUserById(req,res));
+    });
+
+users.route('/users/')
+    .post((req, res) => {
+        res.json(userController.handleNewUser(req,res));
+    });
+
+users.route('/users/:userId/listening/')
+    .post((req, res) => {
+        res.json(userController.handleNewUserListening(req,res));
+    });
 
 // Routing module for root
 function rootErrorHandler(err, req, res, next) {

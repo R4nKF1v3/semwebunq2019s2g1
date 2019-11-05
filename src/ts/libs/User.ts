@@ -43,4 +43,13 @@ export default class User{
   deleteTrack(track: Track){
     this.history = this.history.filter(event => event.track.id != track.id);
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      history: this.history
+    }
+  }
+
 }
