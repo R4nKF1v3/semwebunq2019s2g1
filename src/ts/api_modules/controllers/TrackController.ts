@@ -14,11 +14,11 @@ export default class TrackController extends Controller{
         const trackId = Number.parseInt(req.params.trackId);
         try {
             const unqfy = this.getUNQfy();
-            res.status(200);
-            res.json({
-                Name: "TODO: HardCoded",
-                lyrics: "TODO: HardCoded lyrics"
-            });
+            unqfy.getLyricsFor(trackId, (response, unqf)=>{
+                this.saveUNQfy(unqf);
+                res.status(200);
+                res.json(response);
+            })
         } catch(e) {
             console.log(e);
             if (e instanceof ElementNotFoundError){

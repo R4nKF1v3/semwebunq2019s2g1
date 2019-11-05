@@ -44,7 +44,7 @@ class Track {
                     throw new NoLyricsFoundForTrack_1.default(this.name);
                 }
                 this.lyrics = lyrics.lyrics_body;
-                callback(this.lyrics, unqfy);
+                callback({ name: this.name, lyrics: this.lyrics }, unqfy);
             }
             else {
                 throw new NoLyricsFoundForTrack_1.default(this.name);

@@ -55,7 +55,7 @@ export default class Track{
             throw new NoLyricsFoundForTrack(this.name);
           }
           this.lyrics = lyrics.lyrics_body;
-          callback(this.lyrics, unqfy);
+          callback({name: this.name, lyrics: this.lyrics}, unqfy);
         } else {
           throw new NoLyricsFoundForTrack(this.name);
         }

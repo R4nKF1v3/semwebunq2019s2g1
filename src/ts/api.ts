@@ -9,7 +9,7 @@ import UserController from './api_modules/controllers/UserController';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-let port = process.env.PORT || 8080;
+let port = process.env.PORT || 7000;
 
 const rootApp = express();
 
@@ -65,22 +65,38 @@ const albumController = new AlbumController();
 
 albums.route( '/albums/:id')
     .get((req, res) => {
-        res.json(albumController.handleGetAlbumById(req,res))
+        albumController.handleGetAlbumById(req,res)
     })
     .patch((req, res) => {
-        res.json(albumController.handleUpdateAlbumById(req,res))
+        albumController.handleUpdateAlbumById(req,res)
     })
     .delete((req, res) => {
-        res.json(albumController.handleDeleteAlbumById(req,res))
+        albumController.handleDeleteAlbumById(req,res)
     });
 
 albums.route( '/albums/')
     .get((req, res) => {
-        res.json(albumController.handleGetAlbums(req,res))
+        albumController.handleGetAlbums(req,res)
     })
     .post((req, res) => {
-        res.json(albumController.handleNewAlbum(req,res))
+        albumController.handleNewAlbum(req,res)
     });
+
+
+function albumsErrorHandler(err, req, res, next) {
+    console.error(err);
+    if (err instanceof APIError){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: err.errorCode});
+    } else if (err.type === 'entity.parse.failed'){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: 'BAD_REQUEST'});
+    } else {
+        next(err);
+    }
+}
+
+albums.use(albumsErrorHandler);
     
 // Routing module for /tracks
 const tracks = express();
@@ -92,9 +108,23 @@ const trackController = new TrackController();
     
 tracks.route('/tracks/:trackId/lyrics')
     .get((req, res) => {
-        res.json(trackController.handleGetTrackLyricsByTrackId(req,res))
+        trackController.handleGetTrackLyricsByTrackId(req,res)
     });
-    
+
+function tracksErrorHandler(err, req, res, next) {
+    console.error(err);
+    if (err instanceof APIError){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: err.errorCode});
+    } else if (err.type === 'entity.parse.failed'){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: 'BAD_REQUEST'});
+    } else {
+        next(err);
+    }
+}
+
+tracks.use(tracksErrorHandler);
     
 // Routing module for /playlists
 const playlists = express();
@@ -106,21 +136,36 @@ const playlistController = new PlaylistController();
 
 playlists.route('/playlists')
     .post((req, res) => {
-        res.json(playlistController.handleNewPlaylist(req,res));
+        playlistController.handleNewPlaylist(req,res);
     })
     .get((req, res) => {
-        res.json(playlistController.handleQueryPlaylists(req,res))
+        playlistController.handleQueryPlaylists(req,res)
     })
 ;
 
 playlists.route('/playlists/:playlistsId')
     .get((req, res) => {
-        res.json(playlistController.handleGetPlaylistById(req,res))
+        playlistController.handleGetPlaylistById(req,res)
     })
     .delete((req, res) => {
-        res.json(playlistController.handleDeletePlaylistById(req,res))
+        playlistController.handleDeletePlaylistById(req,res)
     });
-    
+
+
+function playlistsErrorHandler(err, req, res, next) {
+    console.error(err);
+    if (err instanceof APIError){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: err.errorCode});
+    } else if (err.type === 'entity.parse.failed'){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: 'BAD_REQUEST'});
+    } else {
+        next(err);
+    }
+}
+
+tracks.use(playlistsErrorHandler);
 
 // Routing module for /users
 /* Pendiente de implementación */
@@ -148,6 +193,22 @@ users.route('/users/:userId/listening/')
     .post((req, res) => {
         res.json(userController.handleNewUserListening(req,res));
     });
+
+
+function usersErrorHandler(err, req, res, next) {
+    console.error(err);
+    if (err instanceof APIError){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: err.errorCode});
+    } else if (err.type === 'entity.parse.failed'){
+        res.status(err.status);
+        res.json({status: err.status, errorCode: 'BAD_REQUEST'});
+    } else {
+        next(err);
+    }
+}
+
+users.use(usersErrorHandler);
 
 // Routing module for root
 function rootErrorHandler(err, req, res, next) {

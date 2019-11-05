@@ -381,7 +381,7 @@ export default class UNQfy {
     artist.populateAlbums(this, callback);
   }
 
-  getLyricsFor(trackId: string, callback){
+  getLyricsFor(trackId: number, callback){
     const track = this.getTrackById(trackId);
     const artist = this.getArtistForTrack(track);
     track.getLyrics(artist, callback, this);

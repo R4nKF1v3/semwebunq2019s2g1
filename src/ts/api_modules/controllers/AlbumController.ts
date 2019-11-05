@@ -7,6 +7,7 @@ import BadRequest from '../exceptions/BadRequest';
 import ResourceAlreadyExists from '../exceptions/ResourceAlreadyExists';
 import InternalServerError from '../exceptions/InternalServerError';
 import UNQfy from '../../libs/unqfy';
+import RelatedResourceNotFound from "../exceptions/RelatedResourceNotFound";
 
 export default class AlbumController extends Controller{
     
@@ -55,6 +56,8 @@ export default class AlbumController extends Controller{
                 console.log(e);
                 if (e instanceof ElementAreadyExistsError){
                     throw new ResourceAlreadyExists;
+                } else if (e instanceof ElementNotFoundError){
+                    throw new RelatedResourceNotFound;
                 } else {
                     throw new InternalServerError;
                 }
