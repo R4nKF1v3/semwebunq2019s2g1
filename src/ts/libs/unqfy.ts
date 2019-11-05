@@ -376,15 +376,15 @@ export default class UNQfy {
     return artist.getAlbumsNames();
   }
 
-  populateAlbumsForArtist(artistName: string, callback){
+  populateAlbumsForArtist(artistName: string): Promise<any>{
     const artist = this.getArtistById(artistName);
-    artist.populateAlbums(this, callback);
+    return artist.populateAlbums(this);
   }
 
-  getLyricsFor(trackId: number, callback){
+  getLyricsFor(trackId: number): Promise<any>{
     const track = this.getTrackById(trackId);
     const artist = this.getArtistForTrack(track);
-    track.getLyrics(artist, callback, this);
+    return track.getLyrics(artist);
   }
 
   getArtistForTrack(track: Track): Artist{

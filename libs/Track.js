@@ -27,11 +27,12 @@ class Track {
         const res = this.genres.filter(genre => genres.includes(genre));
         return res.length === this.genres.length && res.length === genres.length;
     }
-    getLyrics(artist, callback, unqfy) {
+    getLyrics(artist) {
         const client = new MusixmatchClient_1.default;
         if (this.lyrics) {
-            callback(this.lyrics, unqfy);
-            return;
+            const util = require("util");
+            const ret = util.promisify(() => { return this.lyrics; });
+            return ret();
         }
         client.queryTrackId(this.name, artist.getName())
             .then((response) => {
@@ -44,14 +45,11 @@ class Track {
                     throw new NoLyricsFoundForTrack_1.default(this.name);
                 }
                 this.lyrics = lyrics.lyrics_body;
-                callback({ name: this.name, lyrics: this.lyrics }, unqfy);
+                return { name: this.name, lyrics: this.lyrics };
             }
             else {
                 throw new NoLyricsFoundForTrack_1.default(this.name);
             }
-        })
-            .catch((error) => {
-            console.log(error.message);
         });
     }
 }

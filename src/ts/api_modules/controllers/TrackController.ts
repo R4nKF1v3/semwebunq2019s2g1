@@ -14,8 +14,8 @@ export default class TrackController extends Controller{
         const trackId = Number.parseInt(req.params.trackId);
         try {
             const unqfy = this.getUNQfy();
-            unqfy.getLyricsFor(trackId, (response, unqf)=>{
-                this.saveUNQfy(unqf);
+            unqfy.getLyricsFor(trackId).then(response=>{
+                this.saveUNQfy(unqfy);
                 res.status(200);
                 res.json(response);
             })

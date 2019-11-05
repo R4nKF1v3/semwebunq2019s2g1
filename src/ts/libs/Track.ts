@@ -2,7 +2,6 @@ import Album from "./Album";
 import MusixmatchClient from "./clients/MusixmatchClient";
 import Artist from "./Artist";
 import NoLyricsFoundForTrack from "./exceptions/NoLyricsFoundForTrack";
-import UNQfy from "./unqfy";
 
 export default class Track{
   readonly id: number;
@@ -36,12 +35,13 @@ export default class Track{
     return res.length === this.genres.length && res.length === genres.length;
   }
 
-  getLyrics(artist: Artist, callback, unqfy: UNQfy) {
+  getLyrics(artist: Artist): Promise<any> {
      const client = new MusixmatchClient;
       
      if (this.lyrics){
-        callback(this.lyrics, unqfy);
-        return
+        const util = require("util");
+        const ret = util.promisify(() => {return this.lyrics})
+        return ret();
       }
      
     client.queryTrackId(this.name, artist.getName())
@@ -55,14 +55,11 @@ export default class Track{
             throw new NoLyricsFoundForTrack(this.name);
           }
           this.lyrics = lyrics.lyrics_body;
-          callback({name: this.name, lyrics: this.lyrics}, unqfy);
+          return {name: this.name, lyrics: this.lyrics};
         } else {
           throw new NoLyricsFoundForTrack(this.name);
         }
       })
-      .catch((error) =>{
-        console.log(error.message);
-      });
     
   } 
 }

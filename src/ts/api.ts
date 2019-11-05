@@ -165,7 +165,7 @@ function playlistsErrorHandler(err, req, res, next) {
     }
 }
 
-tracks.use(playlistsErrorHandler);
+playlists.use(playlistsErrorHandler);
 
 // Routing module for /users
 /* Pendiente de implementación */

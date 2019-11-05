@@ -94,9 +94,9 @@ export default class Artist {
     return times;
   }
 
-  populateAlbums(unqfy: UNQfy, callback){
+  populateAlbums(unqfy: UNQfy): Promise<any>{
     const client = new SpotifyClient;
-    client.queryArtistName(this.name)
+    return client.queryArtistName(this.name)
       .then((response) => {
         
         console.log(response.artists.items[0]);
@@ -107,6 +107,8 @@ export default class Artist {
         console.log(res);
         let albumList = res.items;
         albumList.forEach(albResponse => {
+
+          console.log(albResponse)
           
           let albumData = {name: albResponse.name, year: albResponse.release_date.substring(0,3)}
           try
@@ -115,10 +117,8 @@ export default class Artist {
              console.log(error.message);
           }
         });
-        callback(this.getAlbumsNames(), unqfy);
-      }).catch(err =>{
-        console.log(err.message);
-      });
+        return this.getAlbumsNames();
+      })
 
   }
 
