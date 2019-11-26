@@ -8,7 +8,9 @@ import User from "./User";
 import ElementAreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 import ElementNotFoundError from './exceptions/ElementNotFoundError';
 import HistoryEvent from './HistoryEvent';
+import LoggingClient from './clients/LoggingClient';
 
+const loggingClient = new LoggingClient;
 export default class UNQfy {
 
   private idCounter: any = {
@@ -74,6 +76,7 @@ export default class UNQfy {
     if (this.artistDoesNotExist(artistData)){
       const artist = new Artist(this.getNewArtistId(), artistData.name, artistData.country);
       this.artists.push(artist);
+      loggingClient.notifyAddArtist(artist);
       return artist;
     } else {
       throw new ElementAreadyExistsError(`Artist ${artistData.name} from ${artistData.country}`)

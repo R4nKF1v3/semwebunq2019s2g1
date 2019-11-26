@@ -19,6 +19,7 @@ export default class Album{
     if (this.trackDoesNotExist(trackData)){
       const newTrack = new Track(unqfy.getNewTrackId(), trackData.name, Number.parseInt(trackData.duration), trackData.genres, this);
       this.tracks.push(newTrack);
+      
       return newTrack;
     } else {
       throw new ElementAlreadyExistsError(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration}`)
