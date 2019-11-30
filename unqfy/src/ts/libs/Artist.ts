@@ -1,4 +1,5 @@
 import SpotifyClient from "./clients/SpotifyClient";
+import NotificationsClient from './clients/NotificationsClient';
 import Album from "./Album";
 import Track from "./Track";
 import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
@@ -22,6 +23,7 @@ export default class Artist {
     if (this.albumDoesNotExist(albumData)){
       const newAlbum: Album = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
       this.albums.push(newAlbum);
+      NotificationsClient.notifyNewAlbum(this, newAlbum);
       return newAlbum;
     } else {
       throw new ElementAlreadyExistsError(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);

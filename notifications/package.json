@@ -10,6 +10,7 @@
     "@types/express": "^4.17.1",
     "chai": "^4.1.2",
     "express": "^4.17.1",
+    "googleapis": "^45.0.0",
     "picklify": "github:lwoites/picklify",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",

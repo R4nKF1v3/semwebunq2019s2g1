@@ -4,5 +4,3 @@ npm-debug.log
 .env
 .DS_Store
 data.json
-*.js
-package-lock.json
