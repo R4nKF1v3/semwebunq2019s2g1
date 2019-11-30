@@ -5,8 +5,9 @@ import ElementNotFoundError from './exceptions/ElementNotFoundError';
 import InternalServerError from './exceptions/InternalServerError';
 import Subscription from './Subscription';
 import getGmailClient from './gmailClient';
+import { promisify } from 'util';
 
-const gmailClient = getGmailClient();
+const getGmailClientPromise = promisify(getGmailClient);
 
 export default class NotificationModel{
     
@@ -17,18 +18,44 @@ export default class NotificationModel{
     }
     
     getArtistID(artistId: any): Promise<any> {
-        return UNQfyClient.getArtistID(artistId)
-        .catch((error)=>{
-            if (error.status === 404 && error.errorCode === 'RESOURCE_NOT_FOUND'){
-                throw new ElementNotFoundError;
-            } else {
-                throw new InternalServerError;
-            }
-        });
+        if (isNaN(artistId)){
+            return UNQfyClient.getArtistByName(artistId)
+                .then((response : Array<any>)=>{
+                    if (response.length > 0){
+                        return response[0];
+                    } else {
+                        throw new ElementNotFoundError;
+                    }
+                })
+                .catch((error)=>{
+                    console.log(error);
+                    if (error instanceof ElementNotFoundError){
+                        throw error;
+                    } else {
+                        throw new InternalServerError;
+                    }
+                });
+        } else {
+            return UNQfyClient.getArtistID(artistId)
+                .catch((error)=>{
+                    console.log(error);
+                    if (error.error.status === 404 && error.error.errorCode === 'RESOURCE_NOT_FOUND'){
+                        throw new ElementNotFoundError;
+                    } else {
+                        throw new InternalServerError;
+                    }
+                });
+        }
     }
     
     addSubscription(artistId: number, email: string) {
-        this.subscriptions.push(new Subscription(artistId, email));
+        if (!this.subscriptionAlreadyExists(artistId, email)){
+            this.subscriptions.push(new Subscription(artistId, email));
+        }
+    }
+
+    private subscriptionAlreadyExists(artistId : number, email : string) : boolean{
+        return this.subscriptions.find((value : Subscription)=>value.email === email && value.artistId === artistId) != undefined;
     }
     
     deleteSubscription(artistId: number, email: string) {
@@ -38,8 +65,9 @@ export default class NotificationModel{
     getSubscriptorsFor(artistId: number) : Array<string> {
         let emails = [];
         this.subscriptions.forEach((sub :Subscription) =>{
-            if (sub.artistId === artistId)
+            if (sub.artistId === artistId){
                 emails.push(sub.email);
+            }
         })
         return emails;
     }
@@ -48,22 +76,25 @@ export default class NotificationModel{
         this.subscriptions = this.subscriptions.filter((value : Subscription)=>value.artistId !== artistId);
     }
 
-    notifyUsers(artistId: number, subject: string, message: string): any {
+    notifyUsers(artistId: number, subject: string, message: string): Promise<any> {
+        let gmailClient = getGmailClient();
         let userList = this.subscriptions.filter((value : Subscription)=>value.artistId === artistId);
         let p = Promise.resolve()
-        for (let i = 0; i < userList.length; i++) {
-            p = p.then(_ => {
-                let user = userList[i];
-                gmailClient.users.messages.send(
-                    {
-                      userId: 'me',
-                      requestBody: {
-                        raw: this.createMessage(user.email, subject, message),
-                      },
-                    }
-                  );
-            });
-        }
+            .then(()=>{
+                for (let i = 0; i < userList.length; i++) {
+                    p = p.then(()=>{
+                        let user = userList[i];
+                        gmailClient.users.messages.send(
+                            {
+                              userId: 'me',
+                              requestBody: {
+                                raw: this.createMessage(user.email, subject, message),
+                              },
+                            }
+                            );
+                    })
+                }
+            })
         return p;
     }
 

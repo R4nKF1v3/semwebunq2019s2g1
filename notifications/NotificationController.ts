@@ -16,6 +16,7 @@ export default class NotificationController{
                     res.end()
                 })
                 .catch((error)=>{
+                    console.log(error);
                     if (error instanceof ElementNotFoundError){
                         res.status(404);
                         res.json({status: 404, errorCode: 'RELATED_RESOURCE_NOT_FOUND'})
@@ -41,6 +42,7 @@ export default class NotificationController{
                     res.end()
                 })
                 .catch((error)=>{
+                    console.log(error);
                     if (error instanceof ElementNotFoundError){
                         res.status(404);
                         res.json({status: 404, errorCode: 'RELATED_RESOURCE_NOT_FOUND'})
@@ -66,6 +68,7 @@ export default class NotificationController{
                     res.end()
                 })
                 .catch((error)=>{
+                    console.log(error);
                     if (error instanceof ElementNotFoundError){
                         res.status(404);
                         res.json({status: 404, errorCode: 'RELATED_RESOURCE_NOT_FOUND'})
@@ -90,6 +93,7 @@ export default class NotificationController{
                     res.json({artistId: artist.id, subscriptors});
                 })
                 .catch((error)=>{
+                    console.log(error);
                     if (error instanceof ElementNotFoundError){
                         res.status(404);
                         res.json({status: 404, errorCode: 'RELATED_RESOURCE_NOT_FOUND'})
@@ -114,6 +118,7 @@ export default class NotificationController{
                     res.end();
                 })
                 .catch((error)=>{
+                    console.log(error);
                     if (error instanceof ElementNotFoundError){
                         res.status(404);
                         res.json({status: 404, errorCode: 'RELATED_RESOURCE_NOT_FOUND'})

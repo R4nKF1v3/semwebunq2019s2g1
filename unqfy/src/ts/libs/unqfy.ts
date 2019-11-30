@@ -9,6 +9,7 @@ import ElementAreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 import ElementNotFoundError from './exceptions/ElementNotFoundError';
 import HistoryEvent from './HistoryEvent';
 import LoggingClient from './clients/LoggingClient';
+import NotificationsClient from './clients/NotificationsClient';
 
 const loggingClient = new LoggingClient;
 export default class UNQfy {
@@ -150,12 +151,19 @@ export default class UNQfy {
     return this.playlists;
   }
 
-  deleteArtist(artistId: any) {
-    const artistToDelete = this.getArtistById(artistId);
-    const artistAlbums = artistToDelete.getAlbums();
-    artistAlbums.forEach( album => this.deleteAlbum(album.id) );
-    this.artists = this.artists.filter( artist => artist.id !== artistToDelete.id);
-    return {deleted: artistToDelete}
+  deleteArtist(artistId: any) : Promise<any> {
+    let artistToDelete : Artist;
+    return Promise.resolve()
+      .then((r)=>{
+        artistToDelete = this.getArtistById(artistId);
+        const artistAlbums = artistToDelete.getAlbums();
+        artistAlbums.forEach( album => this.deleteAlbum(album.id) );
+        return NotificationsClient.notifyDeleteArtist(artistToDelete)
+      })
+      .then((response)=>{
+        this.artists = this.artists.filter( artist => artist.id !== artistToDelete.id);
+        return {deleted: artistToDelete}
+      })
   }
   
   deleteAlbum(albumId: any) {

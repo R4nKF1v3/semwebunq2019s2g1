@@ -4,7 +4,7 @@ import NotificationController from './NotificationController';
 import ResourceNotFound from './exceptions/ResourceNotFound';
 import APIError from './exceptions/APIError';
 
-let port = process.env.PORT || 7000;
+let port = process.env.PORT || 5001;
 
 const controller = new NotificationController;
 const router = express.Router();

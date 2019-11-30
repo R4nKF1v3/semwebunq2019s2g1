@@ -81,7 +81,14 @@ function executeWith(unqfy: UNQfy,command: string, args: Array<string>): any{
       return unqfy.getPlaylistById(args[0]);
     case "deleteArtist":
       checkParametersLength(args, 1, "deleteArtist");
-      return unqfy.deleteArtist(args[0]);
+      unqfy.deleteArtist(args[0])
+        .then((res)=>{
+          console.log(res);
+          saveUNQfy(unqfy);
+        })
+        .catch((e)=>{{
+          console.log(e);
+        }});
     case "deleteAlbum":
       checkParametersLength(args, 1, "deleteAlbum");
       return unqfy.deleteAlbum(args[0]);
@@ -125,14 +132,20 @@ function executeWith(unqfy: UNQfy,command: string, args: Array<string>): any{
         .then(res => {
           console.log(res);
           saveUNQfy(unqfy);
-        });
+        })
+        .catch((e)=>{{
+          console.log(e.message);
+        }});
     case "getLyricsForTrack":
       checkParametersLength(args, 1, "getLyricsForTrack");
       unqfy.getLyricsFor(parseInt(args[0]))
         .then(res => {
           console.log(res);
           saveUNQfy(unqfy);
-        });
+        })
+        .catch((e)=>{{
+          console.log(e);
+        }});
     default:
       throw new InvalidCommandError(command);
   }

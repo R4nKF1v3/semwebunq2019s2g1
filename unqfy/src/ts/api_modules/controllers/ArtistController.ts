@@ -90,19 +90,26 @@ export default class ArtistController extends Controller{
     }
 
     handleDeleteArtist(req, res){
-        try {
+        if (req.params.artistId){
             const unqfy : UNQfy = this.getUNQfy();
-            unqfy.deleteArtist(req.params.artistId);
-            this.saveUNQfy(unqfy);
-            res.status(204);
-            res.end();
-        } catch(e) {
-            console.log(e);
-            if (e instanceof ElementNotFoundError){
-                throw new ResourceNotFound;
-            } else {
-                throw new InternalServerError;
-            }
+            unqfy.deleteArtist(req.params.artistId)
+                .then((response)=>{
+                    this.saveUNQfy(unqfy);
+                    res.status(204);
+                    res.end();
+                })
+                .catch((e)=> {
+                    console.log(e);
+                    if (e instanceof ElementNotFoundError){
+                        res.status(404);
+                        res.json({status: 404, errorCode: 'RESOURCE_NOT_FOUND'})
+                    } else {
+                        res.status(500);
+                        res.json({status: 500, errorCode: 'INTERNAL_SERVER_ERROR'})
+                    }
+                });
+        } else {
+            throw new BadRequest;
         }
     }
 

@@ -9,7 +9,7 @@ import UserController from './api_modules/controllers/UserController';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-let port = process.env.PORT || 7000;
+let port = process.env.PORT || 5000;
 
 const rootApp = express();
 
