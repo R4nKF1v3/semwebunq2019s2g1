@@ -1,6 +1,14 @@
 export default class LogController{
-    handleAddArtist(req, res){
-        res.status(200);
-        res.json({message:'recibido'})
+    handleLog(req, res){
+        if (this.checkAllFields(req)){
+            let nombreArchivo = "[Date][Type]header";
+            let cuerpo = "Type" + "Message";
+            res.status(200);
+            res.json({message:'recibido'})
+        }
+    }
+
+    private checkAllFields(req){
+        return req.body.
     }
 }

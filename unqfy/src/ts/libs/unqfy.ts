@@ -11,7 +11,6 @@ import HistoryEvent from './HistoryEvent';
 import LoggingClient from './clients/LoggingClient';
 import NotificationsClient from './clients/NotificationsClient';
 
-const loggingClient = new LoggingClient;
 export default class UNQfy {
 
   private idCounter: any = {
@@ -74,13 +73,23 @@ export default class UNQfy {
   //   artistData.country (string)
   // retorna: el nuevo artista creado
   addArtist(artistData: any): Artist {
-    if (this.artistDoesNotExist(artistData)){
-      const artist = new Artist(this.getNewArtistId(), artistData.name, artistData.country);
-      this.artists.push(artist);
-      loggingClient.notifyAddArtist(artist);
-      return artist;
-    } else {
-      throw new ElementAreadyExistsError(`Artist ${artistData.name} from ${artistData.country}`)
+    try{
+      if (this.artistDoesNotExist(artistData)){
+        const artist = new Artist(this.getNewArtistId(), artistData.name, artistData.country);
+        this.artists.push(artist);
+        LoggingClient.notifyAddArtist("info", "Agregado nuevo artista " + artist.getName() + " con id " + artist.id + " y nacionalidad " + artist.getCountry());
+        return artist;
+      } else {
+        throw new ElementAreadyExistsError(`Artist ${artistData.name} from ${artistData.country}`)
+      }
+    }
+    catch(error){
+      if (error instanceof ElementAreadyExistsError){
+        LoggingClient.notifyAddArtist("warning", "Artista de nombre " + artistData.name + " y nacionalidad " + artistData.country + " ya existe");        
+      } else {
+        LoggingClient.notifyAddArtist("error", "Artista de nombre " + artistData.name + " y nacionalidad " + artistData.country + " no pudo ser agregado");                
+      }
+      throw error;
     }
   }
 
@@ -157,12 +166,18 @@ export default class UNQfy {
       .then((r)=>{
         artistToDelete = this.getArtistById(artistId);
         const artistAlbums = artistToDelete.getAlbums();
-        artistAlbums.forEach( album => this.deleteAlbum(album.id) );
+        artistAlbums.forEach( album => artistToDelete.deleteAlbum(album) );
         return NotificationsClient.notifyDeleteArtist(artistToDelete)
       })
       .then((response)=>{
         this.artists = this.artists.filter( artist => artist.id !== artistToDelete.id);
+        LoggingClient.notifyDeleteArtist("info", "");
         return {deleted: artistToDelete}
+      })
+      .catch((error)=>{
+        //si hay un error aca debe informar que no se pudo borrar el artista
+        //y que no se persistieron los cambios.
+        throw error;
       })
   }
   

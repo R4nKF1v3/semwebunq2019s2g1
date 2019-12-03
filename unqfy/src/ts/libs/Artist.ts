@@ -5,6 +5,7 @@ import Track from "./Track";
 import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
 import User from "./User";
 import UNQfy from "./unqfy"
+import LoggingClient from './clients/LoggingClient';
 
 export default class Artist {
   readonly id: number;
@@ -20,13 +21,20 @@ export default class Artist {
   }
 
   addAlbum(albumData: any, unqfy: UNQfy): Album {
-    if (this.albumDoesNotExist(albumData)){
-      const newAlbum: Album = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
-      this.albums.push(newAlbum);
-      NotificationsClient.notifyNewAlbum(this, newAlbum);
-      return newAlbum;
-    } else {
-      throw new ElementAlreadyExistsError(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);
+    try{
+      if (this.albumDoesNotExist(albumData)){
+        const newAlbum: Album = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
+        this.albums.push(newAlbum);
+        NotificationsClient.notifyNewAlbum(this, newAlbum);
+        LoggingClient.notifyAddAlbum(this, newAlbum);
+        return newAlbum;
+      } else {
+        throw new ElementAlreadyExistsError(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);
+      }
+    }
+    catch (error){
+     
+      throw error;
     }
   }
 
@@ -55,6 +63,8 @@ export default class Artist {
   }
 
   deleteAlbum(albumToDelete: Album) {
+    let tracksToDelete = albumToDelete.getTracks()
+    tracksToDelete.forEach(track => albumToDelete.deleteTrack(track));
     this.albums = this.albums.filter( album => album.id !== albumToDelete.id );
   }
 
