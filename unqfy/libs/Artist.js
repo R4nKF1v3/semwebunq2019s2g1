@@ -7,6 +7,7 @@ const SpotifyClient_1 = __importDefault(require("./clients/SpotifyClient"));
 const NotificationsClient_1 = __importDefault(require("./clients/NotificationsClient"));
 const Album_1 = __importDefault(require("./Album"));
 const ElementAlreadyExistsError_1 = __importDefault(require("./exceptions/ElementAlreadyExistsError"));
+const LoggingClient_1 = __importDefault(require("./clients/LoggingClient"));
 class Artist {
     constructor(id, name, country) {
         this.id = id;
@@ -15,14 +16,20 @@ class Artist {
         this.albums = [];
     }
     addAlbum(albumData, unqfy) {
-        if (this.albumDoesNotExist(albumData)) {
-            const newAlbum = new Album_1.default(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
-            this.albums.push(newAlbum);
-            NotificationsClient_1.default.notifyNewAlbum(this, newAlbum);
-            return newAlbum;
+        try {
+            if (this.albumDoesNotExist(albumData)) {
+                const newAlbum = new Album_1.default(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
+                this.albums.push(newAlbum);
+                NotificationsClient_1.default.notifyNewAlbum(this, newAlbum);
+                LoggingClient_1.default.notifyAddAlbum("info", "agregado nuevo album");
+                return newAlbum;
+            }
+            else {
+                throw new ElementAlreadyExistsError_1.default(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);
+            }
         }
-        else {
-            throw new ElementAlreadyExistsError_1.default(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);
+        catch (error) {
+            throw error;
         }
     }
     albumDoesNotExist(albumData) {
@@ -46,6 +53,8 @@ class Artist {
         return albums;
     }
     deleteAlbum(albumToDelete) {
+        let tracksToDelete = albumToDelete.getTracks();
+        tracksToDelete.forEach(track => albumToDelete.deleteTrack(track));
         this.albums = this.albums.filter(album => album.id !== albumToDelete.id);
     }
     getAllTracks() {

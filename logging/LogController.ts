@@ -9,6 +9,7 @@ export default class LogController{
     }
 
     private checkAllFields(req){
-        return req.body.
+      //  return req.body.
+      return req.body.artistId && req.body.email
     }
 }

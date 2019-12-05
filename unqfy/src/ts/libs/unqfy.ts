@@ -71,7 +71,7 @@ export default class UNQfy {
   // artistData: objeto JS con los datos necesarios para crear un artista
   //   artistData.name (string)
   //   artistData.country (string)
-  // retorna: el nuevo artista creado
+  // retorna: el nuevo artista creado y notifica al loggingClient
   addArtist(artistData: any): Artist {
     try{
       if (this.artistDoesNotExist(artistData)){
@@ -113,9 +113,11 @@ export default class UNQfy {
   // retorna: el nuevo track creado
   addTrack(albumId : number, trackData : any): Track {
     let album = this.getAlbumById(albumId);
-    if (album.getTracks().some( track => trackData.name === track.name) ) 
+    if (album.getTracks().some( track => trackData.name === track.name) ) {
       throw new ElementAreadyExistsError(`Track with name ${trackData.name} already exists in album ${album.name}`)
-    return album.addTrack(trackData, this)
+    }
+    LoggingClient.notifyAddTrack( "info", "agregado nuevo album" + trackData.name)
+    return album.addTrack(trackData, this);
   }
 
   private genericSearch(elementId: any, elementsArray: Array<any>, description: string) {
@@ -175,6 +177,8 @@ export default class UNQfy {
         return {deleted: artistToDelete}
       })
       .catch((error)=>{
+        throw new ElementNotFoundError('artist  could not be added');
+        //aqui seria mejor que muestre en  el error el nombre del artista que no pudo agregar
         //si hay un error aca debe informar que no se pudo borrar el artista
         //y que no se persistieron los cambios.
         throw error;

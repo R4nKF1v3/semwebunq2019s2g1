@@ -15,7 +15,6 @@ const ElementNotFoundError_1 = __importDefault(require("./exceptions/ElementNotF
 const HistoryEvent_1 = __importDefault(require("./HistoryEvent"));
 const LoggingClient_1 = __importDefault(require("./clients/LoggingClient"));
 const NotificationsClient_1 = __importDefault(require("./clients/NotificationsClient"));
-const loggingClient = new LoggingClient_1.default;
 class UNQfy {
     constructor() {
         this.idCounter = {
@@ -58,16 +57,27 @@ class UNQfy {
     // artistData: objeto JS con los datos necesarios para crear un artista
     //   artistData.name (string)
     //   artistData.country (string)
-    // retorna: el nuevo artista creado
+    // retorna: el nuevo artista creado y notifica al loggingClient
     addArtist(artistData) {
-        if (this.artistDoesNotExist(artistData)) {
-            const artist = new Artist_1.default(this.getNewArtistId(), artistData.name, artistData.country);
-            this.artists.push(artist);
-            loggingClient.notifyAddArtist(artist);
-            return artist;
+        try {
+            if (this.artistDoesNotExist(artistData)) {
+                const artist = new Artist_1.default(this.getNewArtistId(), artistData.name, artistData.country);
+                this.artists.push(artist);
+                LoggingClient_1.default.notifyAddArtist("info", "Agregado nuevo artista " + artist.getName() + " con id " + artist.id + " y nacionalidad " + artist.getCountry());
+                return artist;
+            }
+            else {
+                throw new ElementAlreadyExistsError_1.default(`Artist ${artistData.name} from ${artistData.country}`);
+            }
         }
-        else {
-            throw new ElementAlreadyExistsError_1.default(`Artist ${artistData.name} from ${artistData.country}`);
+        catch (error) {
+            if (error instanceof ElementAlreadyExistsError_1.default) {
+                LoggingClient_1.default.notifyAddArtist("warning", "Artista de nombre " + artistData.name + " y nacionalidad " + artistData.country + " ya existe");
+            }
+            else {
+                LoggingClient_1.default.notifyAddArtist("error", "Artista de nombre " + artistData.name + " y nacionalidad " + artistData.country + " no pudo ser agregado");
+            }
+            throw error;
         }
     }
     artistDoesNotExist(artistData) {
@@ -88,8 +98,10 @@ class UNQfy {
     // retorna: el nuevo track creado
     addTrack(albumId, trackData) {
         let album = this.getAlbumById(albumId);
-        if (album.getTracks().some(track => trackData.name === track.name))
+        if (album.getTracks().some(track => trackData.name === track.name)) {
             throw new ElementAlreadyExistsError_1.default(`Track with name ${trackData.name} already exists in album ${album.name}`);
+        }
+        LoggingClient_1.default.notifyAddTrack("info", "agregado nuevo album" + trackData.name);
         return album.addTrack(trackData, this);
     }
     genericSearch(elementId, elementsArray, description) {
@@ -135,12 +147,20 @@ class UNQfy {
             .then((r) => {
             artistToDelete = this.getArtistById(artistId);
             const artistAlbums = artistToDelete.getAlbums();
-            artistAlbums.forEach(album => this.deleteAlbum(album.id));
+            artistAlbums.forEach(album => artistToDelete.deleteAlbum(album));
             return NotificationsClient_1.default.notifyDeleteArtist(artistToDelete);
         })
             .then((response) => {
             this.artists = this.artists.filter(artist => artist.id !== artistToDelete.id);
+            LoggingClient_1.default.notifyDeleteArtist("info", "");
             return { deleted: artistToDelete };
+        })
+            .catch((error) => {
+            throw new ElementNotFoundError_1.default('artist  could not be added');
+            //aqui seria mejor que muestre en  el error el nombre del artista que no pudo agregar
+            //si hay un error aca debe informar que no se pudo borrar el artista
+            //y que no se persistieron los cambios.
+            throw error;
         });
     }
     deleteAlbum(albumId) {
