@@ -1,4 +1,4 @@
-import picklify = require('picklify');
+
 import fs = require('fs');
 import UNQfyClient from './UNQfyClient';
 import ElementNotFoundError from './exceptions/InternalServerError';
@@ -47,8 +47,8 @@ export default class LoggingModel{
     
 
     save(filename : string) {
-        const serializedData = picklify.picklify(this);
-        fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));
+        
+        fs.writeFileSync(filename, {encoding: 'utf-8'});
     }
     
     static load(filename : string) {
