@@ -21,6 +21,14 @@ router.route('/log')
     .post((req, res) => {
     logController.handleLog(req, res);
 });
+router.route('/log/enable')
+    .get((req, res) => {
+    logController.enableLog();
+});
+router.route('/log/disable')
+    .get((req, res) => {
+    logController.disableLog();
+});
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
     if (err instanceof APIError_1.default) {
