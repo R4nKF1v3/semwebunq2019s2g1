@@ -1,6 +1,7 @@
 import Track from "./Track";
 import Artist from "./Artist";
 import ElementAlreadyExistsError from "./exceptions/ElementAlreadyExistsError";
+import LoggingClient from './clients/LoggingClient';
 
 export default class Album{
   readonly id: number;
@@ -19,7 +20,7 @@ export default class Album{
     if (this.trackDoesNotExist(trackData)){
       const newTrack = new Track(unqfy.getNewTrackId(), trackData.name, Number.parseInt(trackData.duration), trackData.genres, this);
       this.tracks.push(newTrack);
-      
+      LoggingClient.notifyAddTrack( "info", "agregado nuevo track" );
       return newTrack;
     } else {
       throw new ElementAlreadyExistsError(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration}`)
@@ -33,6 +34,7 @@ export default class Album{
 
   deleteTrack(trackToDelete: Track) {
     this.tracks = this.tracks.filter( track => track.id !== trackToDelete.id );
+    LoggingClient.notifyDeleteTrack( "info", "eliminado track" );
   }
 
   getTracks(): Array<Track> {

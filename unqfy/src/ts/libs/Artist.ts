@@ -26,7 +26,7 @@ export default class Artist {
         const newAlbum: Album = new Album(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
         this.albums.push(newAlbum);
         NotificationsClient.notifyNewAlbum(this, newAlbum);
-        LoggingClient.notifyAddAlbum(this, newAlbum);
+        LoggingClient.notifyAddAlbum( "info", "agregado nuevo album" );
         return newAlbum;
       } else {
         throw new ElementAlreadyExistsError(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);
@@ -66,6 +66,7 @@ export default class Artist {
     let tracksToDelete = albumToDelete.getTracks()
     tracksToDelete.forEach(track => albumToDelete.deleteTrack(track));
     this.albums = this.albums.filter( album => album.id !== albumToDelete.id );
+    LoggingClient.notifyDeleteAlbum( "info", "agregado nuevo album" );
   }
 
   getAllTracks(): Array<Track>{

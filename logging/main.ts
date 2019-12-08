@@ -23,6 +23,21 @@ router.route('/log')
         logController.handleLog(req, res); 
     });
 
+router.route('/enable')
+    .get((req,res)=>{
+        logController.enableLog(); 
+    });   
+
+router.route('/disable')
+    .get((req,res)=>{
+        logController.disableLog(); 
+    });  
+
+router.route('/status')
+    .get((req,res)=>{
+        logController.status(); 
+    });  
+
 
 function rootErrorHandler(err, req, res, next) {
     console.error(err);

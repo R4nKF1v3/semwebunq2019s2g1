@@ -42,7 +42,47 @@ export default class LoggingClient {
         });
     }
 
-    static notifyAddAlbum(artist: Artist, newAlbum: Album) {
-        throw new Error("Method not implemented.");
+    static notifyAddAlbum(type : String, message : String){
+        const rp = require('request-promise');
+
+        rp.post(this.createOptions(type, message, "Agregar Album"))
+            .then((response) => {
+                console.log('Notificado servicio de logging para agregar album')
+        }).catch(error => {
+            console.log('error'+ error.message)
+        });
+      }
+    
+    static notifyDeleteAlbum(type : String, message : String){
+        const rp = require('request-promise');
+
+        rp.delete(this.createOptions(type, message, "Eliminar Album"))
+            .then((response) => {
+                console.log('Notificado servicio de logging para eliminar album')
+        }).catch(error => {
+            console.log('error'+ error.message)
+        });
+      }
+
+      static notifyAddTrack(type : String, message : String){
+        const rp = require('request-promise');
+
+        rp.post(this.createOptions(type, message, "Agregar track"))
+            .then((response) => {
+                console.log('Notificado servicio de logging para agregar track')
+        }).catch(error => {
+            console.log('error'+ error.message)
+        });
+      }
+      
+      static notifyDeleteTrack(type : String, message : String){
+        const rp = require('request-promise');
+
+        rp.delete(this.createOptions(type, message, "Eliminar Track"))
+            .then((response) => {
+                console.log('Notificado servicio de logging para eliminar track')
+        }).catch(error => {
+            console.log('error'+ error.message)
+        });
       }
 }

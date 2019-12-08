@@ -1,21 +1,70 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const BASE_URL = 'http://localhost:puertoadefinir/api/notifications';
+const BASE_URL = 'http://localhost:5002/api/';
 class LoggingClient {
-    notifyAddArtist(artist) {
-        const rp = require('request-promise');
+    static createOptions(type, message, header) {
         var options = {
-            uri: BASE_URL + '/addartist',
-            qs: {
-                q_id: artist.id,
-                q_name: artist.getName(),
-                q_nationality: artist.getCountry()
+            uri: BASE_URL + "/log",
+            body: {
+                type,
+                message,
+                header,
+                date: new Date().toString()
             },
-            json: true // Automatically parses the JSON string in the response
+            json: true
         };
-        rp.post(options)
+        return options;
+    }
+    static notifyAddArtist(type, message) {
+        const rp = require('request-promise');
+        rp.post(this.createOptions(type, message, "Agregar Artista"))
             .then((response) => {
-            console.log('notificado servicio de logging para agregar artista');
+            console.log('Notificado servicio de logging para agregar artista');
+        }).catch(error => {
+            console.log('error' + error.message);
+        });
+    }
+    static notifyDeleteArtist(type, message) {
+        const rp = require('request-promise');
+        rp.delete(this.createOptions(type, message, "Eliminar Artista"))
+            .then((response) => {
+            console.log('Notificado servicio de logging para eliminar artista');
+        }).catch(error => {
+            console.log('error' + error.message);
+        });
+    }
+    static notifyAddAlbum(type, message) {
+        const rp = require('request-promise');
+        rp.post(this.createOptions(type, message, "Agregar Album"))
+            .then((response) => {
+            console.log('Notificado servicio de logging para agregar album');
+        }).catch(error => {
+            console.log('error' + error.message);
+        });
+    }
+    static notifyDeleteAlbum(type, message) {
+        const rp = require('request-promise');
+        rp.delete(this.createOptions(type, message, "Eliminar Album"))
+            .then((response) => {
+            console.log('Notificado servicio de logging para eliminar album');
+        }).catch(error => {
+            console.log('error' + error.message);
+        });
+    }
+    static notifyAddTrack(type, message) {
+        const rp = require('request-promise');
+        rp.post(this.createOptions(type, message, "Agregar track"))
+            .then((response) => {
+            console.log('Notificado servicio de logging para agregar track');
+        }).catch(error => {
+            console.log('error' + error.message);
+        });
+    }
+    static notifyDeleteTrack(type, message) {
+        const rp = require('request-promise');
+        rp.delete(this.createOptions(type, message, "Eliminar Track"))
+            .then((response) => {
+            console.log('Notificado servicio de logging para eliminar track');
         }).catch(error => {
             console.log('error' + error.message);
         });
