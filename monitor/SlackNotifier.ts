@@ -15,8 +15,19 @@ class SlackNotifier {
             method: 'post',
             body: JSON.stringify(body)
         })
-        .then( response => console.log("Mensaje enviado a Slack: " + message) )
-        .catch( error => console.error("Error enviando mensaje a Slack: " + JSON.stringify(error)))
+        .then( (response: Response) => {
+            if (!response.ok) {
+                let messageError = "Error enviando mensaje a Slack. Se recibe status: " + response.status;
+                response.text().then( body => {
+                    console.error(messageError + ". Body: " + JSON.stringify(body));
+                });
+                throw new Error(messageError);
+            }
+            console.log("Mensaje enviado a Slack: " + message) 
+        })
+        .catch( (error: Response) => {
+            console.error("Error enviando mensaje a Slack: " + JSON.stringify(error))
+        })
     }
     
 }

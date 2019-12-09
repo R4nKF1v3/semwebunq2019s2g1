@@ -210,6 +210,12 @@ function usersErrorHandler(err, req, res, next) {
 
 users.use(usersErrorHandler);
 
+const healthCheck = express();
+
+healthCheck.route('/health-check/status')
+    .get((req, res) => res.json({ status: "ok"}));
+
+
 // Routing module for root
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
@@ -220,7 +226,7 @@ function rootErrorHandler(err, req, res, next) {
         next(err);
     }
 }
-rootApp.use('/api', artists, albums, tracks, playlists, users,);
+rootApp.use('/api', artists, albums, tracks, playlists, users, healthCheck);
 rootApp.all('*', (req, res) => {
     throw new ResourceNotFound;
 })
