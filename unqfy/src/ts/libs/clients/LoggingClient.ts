@@ -6,13 +6,13 @@ const BASE_URL = 'http://localhost:5002/api/';
 
 export default class LoggingClient {
 
-    private static createOptions(type: String, message : String, header : String){
+    private static createOptions(tipo: String, msg : String, head : String){
         var options = {
             uri: BASE_URL + "/log",
             body: {
-                type,
-                message,
-                header,
+                type: tipo,
+                message: msg,
+                header: head,
                 date: new Date().toString()
             },
             json: true
@@ -43,6 +43,7 @@ export default class LoggingClient {
     }
 
     static notifyAddAlbum(type : String, message : String){
+        console.log(type);
         const rp = require('request-promise');
 
         rp.post(this.createOptions(type, message, "Agregar Album"))
@@ -53,7 +54,7 @@ export default class LoggingClient {
         });
       }
     
-    static notifyDeleteAlbum(type : String, message : String){
+     static notifyDeleteAlbum(type : String, message : String){
         const rp = require('request-promise');
 
         rp.delete(this.createOptions(type, message, "Eliminar Album"))

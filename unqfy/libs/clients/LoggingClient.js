@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const BASE_URL = 'http://localhost:5002/api/';
 class LoggingClient {
-    static createOptions(type, message, header) {
+    static createOptions(tipo, msg, head) {
         var options = {
             uri: BASE_URL + "/log",
             body: {
-                type,
-                message,
-                header,
+                type: tipo,
+                message: msg,
+                header: head,
                 date: new Date().toString()
             },
             json: true
@@ -34,6 +34,7 @@ class LoggingClient {
         });
     }
     static notifyAddAlbum(type, message) {
+        console.log(type);
         const rp = require('request-promise');
         rp.post(this.createOptions(type, message, "Agregar Album"))
             .then((response) => {

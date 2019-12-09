@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Track_1 = __importDefault(require("./Track"));
 const ElementAlreadyExistsError_1 = __importDefault(require("./exceptions/ElementAlreadyExistsError"));
+const LoggingClient_1 = __importDefault(require("./clients/LoggingClient"));
 class Album {
     constructor(id, name, year, artist) {
         this.id = id;
@@ -16,6 +17,7 @@ class Album {
         if (this.trackDoesNotExist(trackData)) {
             const newTrack = new Track_1.default(unqfy.getNewTrackId(), trackData.name, Number.parseInt(trackData.duration), trackData.genres, this);
             this.tracks.push(newTrack);
+            LoggingClient_1.default.notifyAddTrack("info", "agregado nuevo track");
             return newTrack;
         }
         else {
@@ -27,6 +29,7 @@ class Album {
     }
     deleteTrack(trackToDelete) {
         this.tracks = this.tracks.filter(track => track.id !== trackToDelete.id);
+        LoggingClient_1.default.notifyDeleteTrack("info", "eliminado track");
     }
     getTracks() {
         return this.tracks;

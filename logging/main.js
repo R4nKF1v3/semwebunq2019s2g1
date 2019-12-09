@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const LogController_1 = __importDefault(require("./LogController"));
-const ResourceNotFound_1 = __importDefault(require("./exceptions/ResourceNotFound"));
 const APIError_1 = __importDefault(require("./exceptions/APIError"));
 let port = process.env.PORT || 5002;
 const logController = new LogController_1.default;
@@ -19,19 +18,26 @@ router.route('/')
 });
 router.route('/log')
     .post((req, res) => {
+    console.log(req.body);
     logController.handleLog(req, res);
 });
 router.route('/enable')
     .get((req, res) => {
     logController.enableLog();
+    res.status(200);
+    res.json({ message: 'log habilitado' });
 });
 router.route('/disable')
     .get((req, res) => {
     logController.disableLog();
+    res.status(200);
+    res.json({ message: 'log deshabilitado' });
 });
 router.route('/status')
     .get((req, res) => {
-    logController.status();
+    var status = logController.status();
+    res.status(200);
+    res.json({ message: status });
 });
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
@@ -43,11 +49,11 @@ function rootErrorHandler(err, req, res, next) {
         next(err);
     }
 }
-app.use('/api/notifications', router);
-app.all('*', (req, res) => {
-    throw new ResourceNotFound_1.default;
-});
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
-app.use(rootErrorHandler);
+app.use('/api', router);
+/*app.all('*', (req, res) => {
+    throw new ResourceNotFound;
+})*/
+//app.use(rootErrorHandler);
 app.listen(port);

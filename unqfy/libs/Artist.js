@@ -56,6 +56,7 @@ class Artist {
         let tracksToDelete = albumToDelete.getTracks();
         tracksToDelete.forEach(track => albumToDelete.deleteTrack(track));
         this.albums = this.albums.filter(album => album.id !== albumToDelete.id);
+        LoggingClient_1.default.notifyDeleteAlbum("info", "agregado nuevo album");
     }
     getAllTracks() {
         var allTracks = [];

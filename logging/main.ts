@@ -20,22 +20,30 @@ router.route('/')
 
 router.route('/log')
     .post((req,res)=>{
+        console.log(req.body);
         logController.handleLog(req, res); 
     });
 
 router.route('/enable')
     .get((req,res)=>{
         logController.enableLog(); 
+        res.status(200);
+        res.json({ message :'log habilitado' });
     });   
 
 router.route('/disable')
     .get((req,res)=>{
         logController.disableLog(); 
+        res.status(200);
+        res.json({ message :'log deshabilitado' });
+        
     });  
 
 router.route('/status')
     .get((req,res)=>{
-        logController.status(); 
+        var status = logController.status();
+        res.status(200);
+        res.json({ message : status});
     });  
 
 
@@ -49,14 +57,15 @@ function rootErrorHandler(err, req, res, next) {
     }
 }
 
-app.use('/api/notifications', router);
-app.all('*', (req, res) => {
-    throw new ResourceNotFound;
-})
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use(rootErrorHandler);
+app.use('/api', router);
+/*app.all('*', (req, res) => {
+    throw new ResourceNotFound;
+})*/
+
+
+//app.use(rootErrorHandler);
 
 app.listen(port);
