@@ -12,10 +12,9 @@ import APIError from './exceptions/APIError';
 let port = process.env.PORT || 5011;
 
 const monitoredApplications: Array<MonitoredApplication> = [
-    new MonitoredApplication("mock-api", "https://mock-api.free.beeceptor.com/mock"),
-//    new MonitoredApplication("UNQfy", "http://localhost:5001/status"),
-//    new MonitoredApplication("Logging", "http://localhost:5002/status"),
-//    new MonitoredApplication("Notificador", "http://localhost:5003/status")
+    new MonitoredApplication("UNQfy", "http://localhost:5000/api/health-check/status"),
+    new MonitoredApplication("notifications", "http://localhost:5001/api/health-check/status"),
+    new MonitoredApplication("logging", "http://localhost:5002/api/health-check/status"),
 ];
 
 const slackNotifier: SlackNotifier = new SlackNotifier();

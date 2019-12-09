@@ -46,6 +46,9 @@ router.route('/status')
         res.json({ message : status});
     });  
 
+router.route('/health-check/status')
+    .get((req, res) => res.json({ status: "ok"}));
+
 
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
