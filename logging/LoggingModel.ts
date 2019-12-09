@@ -22,40 +22,7 @@ export default class LoggingModel{
 
         .catch(error => console.log(error));        
     }
-    /*prepareLogFile() {
-        if (!this.logFileExists()){
-            this.createLogFile(nombreArchivo);
-        }       
-        //aca habria que cargarlo en una variable para tenerlo listo
-
-    }
-    createLogFile(nombreArchivo: any) {
-        throw new Error("Method not implemented.");
-    }
     
-    */
-    
-    //estas funciones son las que va a llamar el controller
-    
-    //funcion de escribir el archivo mencionado no implementado writelog
-    //crear el archivo no implementado aun create LogFile 
-    //verificar si existe el archivo , busca en un directorio si existe 
-    //despues de creado el archivo, debo cargarlo en una variable , para poder
-    //usar fs y poder escribir los logs
-    
-
-    
-
-    save(filename : string) {
-        
-        fs.writeFileSync(filename, {encoding: 'utf-8'});
-    }
-    
-    static load(filename : string) {
-        const serializedData = fs.readFileSync(filename, {encoding: 'utf-8'});
-        const classes = [LoggingModel];
-        return picklify.unpicklify(JSON.parse(serializedData), classes);
-    }
 
     private logFileExists(){
         //let loggingModel = this.getModel();

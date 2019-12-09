@@ -4,12 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const LoggingModel_1 = __importDefault(require("./LoggingModel"));
-const fs_1 = __importDefault(require("fs"));
 class LogController {
     handleLog(req, res) {
-        let loggingModel = this.getModel();
+        let loggingModel = new LoggingModel_1.default;
         if (this.checkAllFields(req)) {
-            let cuerpo = req.body.date + req.body.header + req.body.type + ':' + req.body.message;
+            let cuerpo = req.body.type + ':' + req.body.message;
             loggingModel.writeLog(cuerpo);
             // todo - ultimo tarea de enviar el log a LOGGLY.
             res.status(200);
@@ -26,18 +25,19 @@ class LogController {
         return (req.body.type && req.body.message);
     }
     //chequeo si existe el archivo y sino lo crea
-    getModel(filename = './data.json') {
-        let model = new LoggingModel_1.default;
-        if (fs_1.default.existsSync(filename)) {
-            model = LoggingModel_1.default.load(filename);
-        }
-        return model;
-    }
     enableLog() {
         this.logIsEnabled = true;
     }
     disableLog() {
         this.logIsEnabled = false;
+    }
+    status() {
+        if (this.logIsEnabled) {
+            console.log('logging enabled');
+        }
+        else {
+            console.log('loggin disabled');
+        }
     }
 }
 exports.default = LogController;

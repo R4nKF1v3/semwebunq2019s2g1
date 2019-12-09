@@ -5,8 +5,7 @@ export default class LogController{
     private logIsEnabled : boolean;
     
     handleLog(req, res){
-        let loggingModel = this.getModel();
-        
+        let loggingModel = new LoggingModel;
         
         if (this.checkAllFields(req)){    
             let cuerpo = req.body.type + ':' + req.body.message;

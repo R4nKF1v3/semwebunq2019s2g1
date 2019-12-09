@@ -21,13 +21,17 @@ router.route('/log')
     .post((req, res) => {
     logController.handleLog(req, res);
 });
-router.route('/log/enable')
+router.route('/enable')
     .get((req, res) => {
     logController.enableLog();
 });
-router.route('/log/disable')
+router.route('/disable')
     .get((req, res) => {
     logController.disableLog();
+});
+router.route('/status')
+    .get((req, res) => {
+    logController.status();
 });
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
