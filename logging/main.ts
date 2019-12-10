@@ -4,6 +4,18 @@ import LogController from './LogController';
 import ResourceNotFound from './exceptions/ResourceNotFound';
 import APIError from './exceptions/APIError';
 
+var winston  = require('winston');
+var {Loggly} = require('winston-loggly-bulk');
+
+winston.add(new Loggly({
+    token: "1cdaa479-aff8-49c3-a4e5-da9ca3354e17",
+    subdomain: "ferblanco",
+    tags: ["Winston-NodeJS"],
+    json: true
+}));
+
+winston.log('info', "Hello World from Node.js!");
+
 let port = process.env.PORT || 5002;
 
 const logController = new LogController;
@@ -21,7 +33,10 @@ router.route('/')
 router.route('/log')
     .post((req,res)=>{
         console.log(req.body);
-        logController.handleLog(req, res); 
+        winston.log(req.body.type, req.body.message);
+        logController.handleLog(req, res);
+        res.status(200);
+                
     });
 
 router.route('/enable')

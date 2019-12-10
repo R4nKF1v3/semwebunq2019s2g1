@@ -51,5 +51,8 @@ class Album {
             tracks: trackList
         };
     }
+    getName() {
+        return this.name;
+    }
 }
 exports.default = Album;

@@ -7,12 +7,12 @@ export default class LogController{
     
     handleLog(req, res){
         let loggingModel = new LoggingModel;
-        console.log(req);   
+        console.log(req.body);   
         if (this.checkAllFields(req)){
             let header = req.body.header;
             let date = req.body.date;
             let type = req.body.type;
-            let message =  req.message;
+            let message =  req.body.message;
             loggingModel.writeLog(date, type, header,message);
             // todo - ultimo tarea de enviar el log a LOGGLY.
             res.status(200);
@@ -25,7 +25,7 @@ export default class LogController{
     
     private checkAllFields(req): boolean{
 
-        return (req.body.type && req.body.message && req.body.date && req.body.header) ;
+        return (req.body.type && req.body.message && req.body.date && req.body.header);
     }
     
     //chequeo si existe el archivo y sino lo crea

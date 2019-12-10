@@ -8,12 +8,12 @@ const BadRequest_1 = __importDefault(require("./exceptions/BadRequest"));
 class LogController {
     handleLog(req, res) {
         let loggingModel = new LoggingModel_1.default;
-        console.log(req);
+        console.log(req.body);
         if (this.checkAllFields(req)) {
             let header = req.body.header;
             let date = req.body.date;
             let type = req.body.type;
-            let message = req.message;
+            let message = req.body.message;
             loggingModel.writeLog(date, type, header, message);
             // todo - ultimo tarea de enviar el log a LOGGLY.
             res.status(200);

@@ -1,22 +1,27 @@
 import Artist from '../Artist'
 import Album from '../Album';
+import { userInfo } from 'os';
+
 
 
 const BASE_URL = 'http://localhost:5002/api/';
 
 export default class LoggingClient {
-
+    
     private static createOptions(tipo: String, msg : String, head : String){
+        var dateFormat = require('date-format');
+        var datestr = dateFormat('yyyy-MM-dd', new Date()); 
         var options = {
             uri: BASE_URL + "/log",
             body: {
                 type: tipo,
                 message: msg,
                 header: head,
-                date: new Date().toString()
+                date: datestr
             },
             json: true
         }; 
+        console.log(options);
         return options;
     }
   
@@ -43,7 +48,6 @@ export default class LoggingClient {
     }
 
     static notifyAddAlbum(type : String, message : String){
-        console.log(type);
         const rp = require('request-promise');
 
         rp.post(this.createOptions(type, message, "Agregar Album"))

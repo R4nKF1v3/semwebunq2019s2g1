@@ -60,4 +60,8 @@ export default class Album{
     }
   }
 
+  getName(){
+    return this.name;
+  }
+
 }

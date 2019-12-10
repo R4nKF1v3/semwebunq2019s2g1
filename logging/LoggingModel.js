@@ -18,8 +18,8 @@ class LoggingModel {
         const path = "/tmp/";
         const name = date + ".log";
         const writeFile = util.promisify(fs.writeFile);
-        const log = date + "-" + type + "-" + "-" + header + "-" + message;
-        writeFile(path + name, log)
+        const log = date + "-" + type + "-" + "-" + header + "-" + message + '\n';
+        writeFile(path + name, log, { flag: 'as' })
             .then(() => console.log("file created successfully with promisify!"))
             //.then() aca podria encadenar con el servicio de logly
             .catch(error => console.log(error));

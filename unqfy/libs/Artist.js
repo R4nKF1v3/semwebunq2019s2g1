@@ -21,7 +21,7 @@ class Artist {
                 const newAlbum = new Album_1.default(unqfy.getNewAlbumId(), albumData.name, albumData.year, this);
                 this.albums.push(newAlbum);
                 NotificationsClient_1.default.notifyNewAlbum(this, newAlbum);
-                LoggingClient_1.default.notifyAddAlbum("info", "agregado nuevo album");
+                LoggingClient_1.default.notifyAddAlbum("info", "agregado nuevo album" + '"' + albumData.name + '"');
                 return newAlbum;
             }
             else {
@@ -56,7 +56,7 @@ class Artist {
         let tracksToDelete = albumToDelete.getTracks();
         tracksToDelete.forEach(track => albumToDelete.deleteTrack(track));
         this.albums = this.albums.filter(album => album.id !== albumToDelete.id);
-        LoggingClient_1.default.notifyDeleteAlbum("info", "agregado nuevo album");
+        LoggingClient_1.default.notifyDeleteAlbum("info", "eliminado album" + albumToDelete.getName());
     }
     getAllTracks() {
         var allTracks = [];

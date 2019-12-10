@@ -3,16 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const BASE_URL = 'http://localhost:5002/api/';
 class LoggingClient {
     static createOptions(tipo, msg, head) {
+        var dateFormat = require('date-format');
+        var datestr = dateFormat('yyyy-MM-dd', new Date());
         var options = {
             uri: BASE_URL + "/log",
             body: {
                 type: tipo,
                 message: msg,
                 header: head,
-                date: new Date().toString()
+                date: datestr
             },
             json: true
         };
+        console.log(options);
         return options;
     }
     static notifyAddArtist(type, message) {
@@ -34,7 +37,6 @@ class LoggingClient {
         });
     }
     static notifyAddAlbum(type, message) {
-        console.log(type);
         const rp = require('request-promise');
         rp.post(this.createOptions(type, message, "Agregar Album"))
             .then((response) => {
