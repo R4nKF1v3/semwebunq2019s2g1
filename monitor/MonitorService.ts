@@ -26,6 +26,10 @@ class MonitorService {
                 .then( (response: any) => {
                     app.updateStatusWithResponse(response)
                     return app;
+                })
+                .catch( (error: any) => {
+                    app.updateStatusWithResponse(error)
+                    return app;
                 });
 
             promises.push(appStatusPromise);
@@ -105,6 +109,8 @@ class PeriodicChecker {
         if (this._isActive) 
             return;
         this._isActive = true;
+
+        service.checkApplicationStatus();
         this.interval = setInterval( () => {
             service.checkApplicationStatus()
                 .catch( error => console.error("checkApplicationStatus error ejecutando pediodo de checkeo" + JSON.stringify(error)) );

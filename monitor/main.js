@@ -13,7 +13,9 @@ const ResourceNotFound_1 = __importDefault(require("./exceptions/ResourceNotFoun
 const APIError_1 = __importDefault(require("./exceptions/APIError"));
 let port = process.env.PORT || 5011;
 const monitoredApplications = [
-    new MonitoredApplication_1.default("mock-api", "https://mock-api.free.beeceptor.com/mock"),
+    new MonitoredApplication_1.default("UNQfy", "http://localhost:5000/api/health-check/status"),
+    new MonitoredApplication_1.default("notifications", "http://localhost:5001/api/health-check/status"),
+    new MonitoredApplication_1.default("logging", "http://localhost:5002/api/health-check/status"),
 ];
 const slackNotifier = new SlackNotifier_1.default();
 const service = new MonitorService_1.default(monitoredApplications, slackNotifier);

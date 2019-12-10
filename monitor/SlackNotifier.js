@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(require("node-fetch"));
 class SlackNotifier {
     constructor() {
-        this.SLACK_URL = "https://hooks.slack.com/services/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";
+        this.SLACK_URL = "https://hooks.slack.com/services/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";
     }
     sendNotification(message) {
         console.log("Comenzando envío de notificación a Slack: " + message);
@@ -17,8 +17,19 @@ class SlackNotifier {
             method: 'post',
             body: JSON.stringify(body)
         })
-            .then(response => console.log("Mensaje enviado a Slack: " + message))
-            .catch(error => console.error("Error enviando mensaje a Slack: " + JSON.stringify(error)));
+            .then((response) => {
+            if (!response.ok) {
+                let messageError = "Error enviando mensaje a Slack. Se recibe status: " + response.status;
+                response.text().then(body => {
+                    console.error(messageError + ". Body: " + JSON.stringify(body));
+                });
+                throw new Error(messageError);
+            }
+            console.log("Mensaje enviado a Slack: " + message);
+        })
+            .catch((error) => {
+            console.error("Error enviando mensaje a Slack: " + JSON.stringify(error));
+        });
     }
 }
 exports.default = SlackNotifier;

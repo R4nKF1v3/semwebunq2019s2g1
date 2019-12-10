@@ -11,13 +11,13 @@ class MonitoredApplication {
         this.name = appName;
         this.statusUrl = statusUrl;
 
-        this.currentStatus = MonitoredApplication.ERROR;
+        this.currentStatus = MonitoredApplication.NORMAL;
         this.previousStatus = MonitoredApplication.NORMAL;
     }
 
     updateStatusWithResponse(appResponse): any {
         const STATUS_OK = appResponse.status == 200;
-        const BODY_OK = ("" + appResponse.body.status).toLowerCase() === 'ok';
+        const BODY_OK = appResponse.body != null && ("" + appResponse.body.status).toLowerCase() === 'ok';
 
         this.previousStatus = this.currentStatus;
         this.currentStatus = STATUS_OK && BODY_OK ? MonitoredApplication.NORMAL : MonitoredApplication.ERROR;

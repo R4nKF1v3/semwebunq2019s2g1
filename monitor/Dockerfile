@@ -9,6 +9,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5003
+EXPOSE 5011
 
 CMD [ "node", "main.js" ]

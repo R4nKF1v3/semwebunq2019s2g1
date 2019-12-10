@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 class SlackNotifier {
 
-    private readonly SLACK_URL: string = "https://hooks.slack.com/services/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";
+    private readonly SLACK_URL: string = "https://hooks.slack.com/services/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";
 
     constructor() {}
 
