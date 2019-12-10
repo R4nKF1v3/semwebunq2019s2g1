@@ -173,15 +173,12 @@ export default class UNQfy {
       })
       .then((response)=>{
         this.artists = this.artists.filter( artist => artist.id !== artistToDelete.id);
-        LoggingClient.notifyDeleteArtist("info", "");
+        LoggingClient.notifyDeleteArtist("info", "se booro el artista" + artistToDelete.getName());
         return {deleted: artistToDelete}
       })
       .catch((error)=>{
+        LoggingClient.notifyDeleteArtist( "error", "no se pudo borrar artista" + '"' +artistToDelete.getName() +'"');
         throw new ElementNotFoundError('artist  could not be added');
-        //aqui seria mejor que muestre en  el error el nombre del artista que no pudo agregar
-        //si hay un error aca debe informar que no se pudo borrar el artista
-        //y que no se persistieron los cambios.
-        throw error;
       })
   }
   

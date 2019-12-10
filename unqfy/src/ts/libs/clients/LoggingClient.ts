@@ -4,7 +4,7 @@ import { userInfo } from 'os';
 
 
 
-const BASE_URL = 'http://localhost:5002/api/';
+const BASE_URL = 'http://172.20.0.23:5002/api/';
 
 export default class LoggingClient {
     

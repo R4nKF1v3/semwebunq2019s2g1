@@ -20,9 +20,11 @@ export default class Album{
     if (this.trackDoesNotExist(trackData)){
       const newTrack = new Track(unqfy.getNewTrackId(), trackData.name, Number.parseInt(trackData.duration), trackData.genres, this);
       this.tracks.push(newTrack);
-      LoggingClient.notifyAddTrack( "info", "agregado nuevo track" );
+      LoggingClient.notifyAddTrack( "info", "agregado nuevo track" + newTrack.name );
       return newTrack;
     } else {
+      LoggingClient.notifyAddTrack( "error", "no se agrego nuevo track" + '"' + trackData.name +'"');
+
       throw new ElementAlreadyExistsError(`Track ${trackData.name} of ${this.name} with genres ${trackData.genres} and duration ${trackData.duration}`)
     }
     

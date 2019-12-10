@@ -11,11 +11,11 @@ const MonitoredApplication_1 = __importDefault(require("./MonitoredApplication")
 const SlackNotifier_1 = __importDefault(require("./SlackNotifier"));
 const ResourceNotFound_1 = __importDefault(require("./exceptions/ResourceNotFound"));
 const APIError_1 = __importDefault(require("./exceptions/APIError"));
-let port = process.env.PORT || 5011;
+let port = process.env.PORT || 5012;
 const monitoredApplications = [
-    new MonitoredApplication_1.default("UNQfy", "http://localhost:5000/api/health-check/status"),
-    new MonitoredApplication_1.default("notifications", "http://localhost:5001/api/health-check/status"),
-    new MonitoredApplication_1.default("logging", "http://localhost:5002/api/health-check/status"),
+    new MonitoredApplication_1.default("UNQfy", "http://172.20.0.21:5000/api/health-check/status"),
+    new MonitoredApplication_1.default("notifications", "http://172.20.0.22:5001/api/health-check/status"),
+    new MonitoredApplication_1.default("logging", "http://172.20.0.23:5002/api/health-check/status"),
 ];
 const slackNotifier = new SlackNotifier_1.default();
 const service = new MonitorService_1.default(monitoredApplications, slackNotifier);

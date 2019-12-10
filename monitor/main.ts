@@ -9,12 +9,12 @@ import SlackNotifier from './SlackNotifier';
 import ResourceNotFound from './exceptions/ResourceNotFound';
 import APIError from './exceptions/APIError';
 
-let port = process.env.PORT || 5011;
+let port = process.env.PORT || 5012;
 
 const monitoredApplications: Array<MonitoredApplication> = [
-    new MonitoredApplication("UNQfy", "http://localhost:5000/api/health-check/status"),
-    new MonitoredApplication("notifications", "http://localhost:5001/api/health-check/status"),
-    new MonitoredApplication("logging", "http://localhost:5002/api/health-check/status"),
+    new MonitoredApplication("UNQfy", "http://172.20.0.21:5000/api/health-check/status"),
+    new MonitoredApplication("notifications", "http://172.20.0.22:5001/api/health-check/status"),
+    new MonitoredApplication("logging", "http://172.20.0.23:5002/api/health-check/status"),
 ];
 
 const slackNotifier: SlackNotifier = new SlackNotifier();

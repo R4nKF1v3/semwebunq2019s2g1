@@ -30,6 +30,8 @@ router.route('/subscriptions')
     .delete((req, res) => {
     controller.handleDeleteSubscriptions(req, res);
 });
+router.route('/health-check/status')
+    .get((req, res) => res.json({ status: "ok" }));
 function rootErrorHandler(err, req, res, next) {
     console.error(err);
     if (err instanceof APIError_1.default) {

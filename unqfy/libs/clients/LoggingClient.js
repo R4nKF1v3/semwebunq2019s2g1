@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const BASE_URL = 'http://localhost:5002/api/';
+const BASE_URL = 'http://172.20.0.23:5002/api/';
 class LoggingClient {
     static createOptions(tipo, msg, head) {
         var dateFormat = require('date-format');

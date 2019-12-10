@@ -1,7 +1,7 @@
 import Artist from "../Artist";
 import Album from "../Album";
 
-const BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = 'http://172.20.0.22:5001/api';
 
 export default class NotificationsClient{
     static notifyNewAlbum(artist: Artist, album: Album) {

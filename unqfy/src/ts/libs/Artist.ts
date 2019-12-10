@@ -29,6 +29,7 @@ export default class Artist {
         LoggingClient.notifyAddAlbum( "info", "agregado nuevo album" + '"' +albumData.name +'"');
         return newAlbum;
       } else {
+        LoggingClient.notifyAddAlbum( "error", "no se agrego nuevo album" + '"' +albumData.name +'"');
         throw new ElementAlreadyExistsError(`Album ${albumData.name} of ${this.name} in ${albumData.year}`);
       }
     }

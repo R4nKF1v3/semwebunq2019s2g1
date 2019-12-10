@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = 'http://172.20.0.22:5001/api';
 class NotificationsClient {
     static notifyNewAlbum(artist, album) {
         const rp = require('request-promise');
