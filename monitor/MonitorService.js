@@ -22,6 +22,10 @@ class MonitorService {
                 .then((response) => {
                 app.updateStatusWithResponse(response);
                 return app;
+            })
+                .catch((error) => {
+                app.updateStatusWithResponse(error);
+                return app;
             });
             promises.push(appStatusPromise);
         });
@@ -48,7 +52,7 @@ class MonitorService {
             this.periodicChecker.activate(this);
         else
             this.periodicChecker.deactivate();
-        return { "status": this.periodicChecker.isActive };
+        return { "status": this.periodicChecker.isActive ? "active" : "disabled" };
     }
     extractResponse(response) {
         return new Promise((resolve, reject) => {
@@ -83,6 +87,7 @@ class PeriodicChecker {
         if (this._isActive)
             return;
         this._isActive = true;
+        service.checkApplicationStatus();
         this.interval = setInterval(() => {
             service.checkApplicationStatus()
                 .catch(error => console.error("checkApplicationStatus error ejecutando pediodo de checkeo" + JSON.stringify(error)));
